@@ -43,6 +43,8 @@ public class ChessPiece {
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
      * danger
+     * My notes - take into account that you can't move to a square if its has a piece of your own.
+     * you can move to the opponents square if you capture it.
      *
      * @return Collection of valid moves
      */
