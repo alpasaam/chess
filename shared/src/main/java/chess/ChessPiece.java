@@ -44,7 +44,7 @@ public class ChessPiece {
      * Does not take into account moves that are illegal due to leaving the king in
      * danger
      * My notes - take into account that you can't move to a square if its has a piece of your own.
-     * you can move to the opponents square if you capture it.
+     * you can move to the opponents square if you capture it. Don't make new classes for each piece.
      *
      * @return Collection of valid moves
      */
