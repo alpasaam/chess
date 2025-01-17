@@ -10,8 +10,8 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece implements PieceMovesCalculator {
-    private ChessGame.TeamColor pieceColor;
-    private PieceType type;
+    private final ChessGame.TeamColor pieceColor;
+    private final PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
@@ -50,7 +50,6 @@ public class ChessPiece implements PieceMovesCalculator {
      * danger
      * My notes - take into account that you can't move to a square if its has a piece of your own.
      * you can move to the opponents square if you capture it. Don't make new classes for each piece.
-     *
      * make a PieceMovesCalculator INTERFACE and use switch statements in ChessPiece
      * under the PieceMovesCalculator, you'll have KingMovesCalculator and all other piece.
      * @return Collection of valid moves
