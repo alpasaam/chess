@@ -23,7 +23,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow()-1][position.getColumn()-1] = piece;
+        board[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
 
     /**
@@ -34,7 +34,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow()-1][position.getColumn()-1];
+        return board[position.getRow() - 1][position.getColumn() - 1];
     }
 
     /**
@@ -76,20 +76,20 @@ public class ChessBoard {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 ChessPiece piece = board[i][j];
                 if (piece != null) {
                     ChessPosition position = new ChessPosition(i + 1, j + 1);
-                    sb.append("Position: ").append(position)
+                    builder.append("Position: ").append(position)
                             .append(", Piece: ").append(piece.getPieceType())
                             .append(", Color: ").append(piece.getTeamColor())
                             .append("\n");
                 }
             }
         }
-        return sb.toString();
+        return builder.toString();
     }
 
     /**

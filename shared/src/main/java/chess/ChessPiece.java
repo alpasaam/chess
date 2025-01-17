@@ -9,7 +9,7 @@ import java.util.Collection;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessPiece {
+public class ChessPiece implements PieceMovesCalculator {
     private ChessGame.TeamColor pieceColor;
     private PieceType type;
 
