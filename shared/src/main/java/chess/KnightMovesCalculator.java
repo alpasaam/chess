@@ -13,7 +13,7 @@ public class KnightMovesCalculator implements PieceMovesCalculator {
             int x = myPosition.getRow() + dx[i];
             int y = myPosition.getColumn() + dy[i];
             ChessPosition newPosition = new ChessPosition(x, y);
-            if (!newPosition.isValid()) {
+            if (newPosition.isNotValid()) {
                 continue;
             }
             ChessPiece piece = board.getPiece(newPosition);

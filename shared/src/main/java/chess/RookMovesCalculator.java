@@ -14,7 +14,7 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             while (true) {
                 x += dx;
                 ChessPosition newPosition = new ChessPosition(x, y);
-                if (!newPosition.isValid()) {
+                if (newPosition.isNotValid()) {
                     break;
                 }
                 ChessPiece piece = board.getPiece(newPosition);
@@ -35,7 +35,7 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             while (true) {
                 y += dy;
                 ChessPosition newPosition = new ChessPosition(x, y);
-                if (!newPosition.isValid()) {
+                if (newPosition.isNotValid()) {
                     break;
                 }
                 ChessPiece piece = board.getPiece(newPosition);

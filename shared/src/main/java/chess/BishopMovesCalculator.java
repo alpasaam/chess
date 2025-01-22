@@ -17,7 +17,7 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
                     x += dx;
                     y += dy;
                     ChessPosition newPosition = new ChessPosition(x, y);
-                    if (!newPosition.isValid()) {
+                    if (newPosition.isNotValid()) {
                         break;
                     }
                     ChessPiece piece = board.getPiece(newPosition);
