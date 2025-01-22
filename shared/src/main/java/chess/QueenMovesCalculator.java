@@ -2,8 +2,8 @@ package chess;
 
 import java.util.Collection;
 
-public interface QueenMovesCalculator implements PieceMovesCalculator {
-    default Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+public class QueenMovesCalculator implements PieceMovesCalculator {
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         return null;
     }
 }

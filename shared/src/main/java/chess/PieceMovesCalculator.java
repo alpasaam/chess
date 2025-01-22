@@ -2,6 +2,6 @@ package chess;
 
 import java.util.Collection;
 
-public interface PieceMovesCalculator extends KingMovesCalculator, QueenMovesCalculator, BishopMovesCalculator, KnightMovesCalculator, RookMovesCalculator, PawnMovesCalculator{
+public interface PieceMovesCalculator {
     Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition);
 }
