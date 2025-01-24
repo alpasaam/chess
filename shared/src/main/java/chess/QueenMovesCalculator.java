@@ -13,25 +13,7 @@ public class QueenMovesCalculator implements PieceMovesCalculator {
                 if (dx == 0 && dy == 0) {
                     continue;
                 }
-                int x = myPosition.getRow();
-                int y = myPosition.getColumn();
-                while (true) {
-                    x += dx;
-                    y += dy;
-                    ChessPosition newPosition = new ChessPosition(x, y);
-                    if (newPosition.isNotValid()) {
-                        break;
-                    }
-                    ChessPiece piece = board.getPiece(newPosition);
-                    if (piece == null) {
-                        moves.add(new ChessMove(myPosition, newPosition, null));
-                    } else {
-                        if (piece.getTeamColor() != myColor) {
-                            moves.add(new ChessMove(myPosition, newPosition, null));
-                        }
-                        break;
-                    }
-                }
+                BishopMovesCalculator.implementBishopQueenDirections(board, myPosition, moves, myColor, dx, dy);
             }
         }
         return moves;

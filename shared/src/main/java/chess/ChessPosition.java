@@ -19,8 +19,8 @@ public class ChessPosition {
         this.col = col;
     }
 
-    public boolean isNotValid() {
-        return row < 1 || row > 8 || col < 1 || col > 8;
+    public boolean isValid() {
+        return row >= 1 && row <= 8 && col >= 1 && col <= 8;
     }
 
     /**

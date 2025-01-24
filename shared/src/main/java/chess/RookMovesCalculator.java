@@ -14,16 +14,7 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             while (true) {
                 x += dx;
                 ChessPosition newPosition = new ChessPosition(x, y);
-                if (newPosition.isNotValid()) {
-                    break;
-                }
-                ChessPiece piece = board.getPiece(newPosition);
-                if (piece == null) {
-                    moves.add(new ChessMove(myPosition, newPosition, null));
-                } else {
-                    if (piece.getTeamColor() != myColor) {
-                        moves.add(new ChessMove(myPosition, newPosition, null));
-                    }
+                if (BishopMovesCalculator.checkIfBishopRookAbleToMoveTo(board, myPosition, moves, myColor, newPosition)) {
                     break;
                 }
             }
@@ -35,20 +26,13 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             while (true) {
                 y += dy;
                 ChessPosition newPosition = new ChessPosition(x, y);
-                if (newPosition.isNotValid()) {
-                    break;
-                }
-                ChessPiece piece = board.getPiece(newPosition);
-                if (piece == null) {
-                    moves.add(new ChessMove(myPosition, newPosition, null));
-                } else {
-                    if (piece.getTeamColor() != myColor) {
-                        moves.add(new ChessMove(myPosition, newPosition, null));
-                    }
+                if (BishopMovesCalculator.checkIfBishopRookAbleToMoveTo(board, myPosition, moves, myColor, newPosition)) {
                     break;
                 }
             }
         }
+
+
         return moves;
     }
 }

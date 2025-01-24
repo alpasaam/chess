@@ -8,7 +8,46 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moves = new ArrayList<>();
         ChessGame.TeamColor myColor = board.getPiece(myPosition).getTeamColor();
+        int direction = (myColor == ChessGame.TeamColor.WHITE) ? 1 : -1;
+        int promotionRow = (myColor == ChessGame.TeamColor.WHITE) ? 8 : 1;
+        int startRow = (myColor == ChessGame.TeamColor.WHITE) ? 2 : 7;
+
+        // Move forward
+        ChessPosition forwardPosition = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn());
+        if (forwardPosition.isValid() && board.getPiece(forwardPosition) == null) {
+            checkPromotion(myPosition, moves, promotionRow, forwardPosition);
+            // Initial double move
+            if (myPosition.getRow() == startRow) {
+                ChessPosition doubleForwardPosition = new ChessPosition(myPosition.getRow() + 2 * direction, myPosition.getColumn());
+                if (doubleForwardPosition.isValid() && board.getPiece(doubleForwardPosition) == null) {
+                    moves.add(new ChessMove(myPosition, doubleForwardPosition, null));
+                }
+            }
+        }
+
+        // Capture diagonally
+        int[] captureDirections = {-1, 1};
+        for (int dx : captureDirections) {
+            ChessPosition capturePosition = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn() + dx);
+            if (capturePosition.isValid()) {
+                ChessPiece piece = board.getPiece(capturePosition);
+                if (piece != null && piece.getTeamColor() != myColor) {
+                    checkPromotion(myPosition, moves, promotionRow, capturePosition);
+                }
+            }
+        }
 
         return moves;
+    }
+
+    private void checkPromotion(ChessPosition myPosition, Collection<ChessMove> moves, int promotionRow, ChessPosition forwardPosition) {
+        if (forwardPosition.getRow() == promotionRow) {
+            moves.add(new ChessMove(myPosition, forwardPosition, ChessPiece.PieceType.QUEEN));
+            moves.add(new ChessMove(myPosition, forwardPosition, ChessPiece.PieceType.ROOK));
+            moves.add(new ChessMove(myPosition, forwardPosition, ChessPiece.PieceType.BISHOP));
+            moves.add(new ChessMove(myPosition, forwardPosition, ChessPiece.PieceType.KNIGHT));
+        } else {
+            moves.add(new ChessMove(myPosition, forwardPosition, null));
+        }
     }
 }

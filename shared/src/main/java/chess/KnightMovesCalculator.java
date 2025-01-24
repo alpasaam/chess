@@ -12,15 +12,19 @@ public class KnightMovesCalculator implements PieceMovesCalculator {
         for (int i = 0; i < 8; i++) {
             int x = myPosition.getRow() + dx[i];
             int y = myPosition.getColumn() + dy[i];
-            ChessPosition newPosition = new ChessPosition(x, y);
-            if (newPosition.isNotValid()) {
-                continue;
-            }
-            ChessPiece piece = board.getPiece(newPosition);
-            if (piece == null || piece.getTeamColor() != myColor) {
-                moves.add(new ChessMove(myPosition, newPosition, null));
-            }
+            checkIfKnightKingAbleToMoveTo(board, myPosition, moves, myColor, x, y);
         }
         return moves;
+    }
+
+    static void checkIfKnightKingAbleToMoveTo(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves, ChessGame.TeamColor myColor, int x, int y) {
+        ChessPosition newPosition = new ChessPosition(x, y);
+        if (!newPosition.isValid()) {
+            return;
+        }
+        ChessPiece piece = board.getPiece(newPosition);
+        if (piece == null || piece.getTeamColor() != myColor) {
+            moves.add(new ChessMove(myPosition, newPosition, null));
+        }
     }
 }

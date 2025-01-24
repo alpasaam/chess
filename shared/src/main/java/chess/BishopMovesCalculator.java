@@ -11,27 +11,38 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
 
         for (int dx : directions) {
             for (int dy : directions) {
-                int x = myPosition.getRow();
-                int y = myPosition.getColumn();
-                while (true) {
-                    x += dx;
-                    y += dy;
-                    ChessPosition newPosition = new ChessPosition(x, y);
-                    if (newPosition.isNotValid()) {
-                        break;
-                    }
-                    ChessPiece piece = board.getPiece(newPosition);
-                    if (piece == null ) {
-                        moves.add(new ChessMove(myPosition, newPosition, null));
-                    } else {
-                        if (piece.getTeamColor() != myColor) {
-                            moves.add(new ChessMove(myPosition, newPosition, null));
-                        }
-                        break;
-                    }
-                }
+                implementBishopQueenDirections(board, myPosition, moves, myColor, dx, dy);
             }
         }
         return moves;
+    }
+
+    static void implementBishopQueenDirections(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves, ChessGame.TeamColor myColor, int dx, int dy) {
+        int x = myPosition.getRow();
+        int y = myPosition.getColumn();
+        while (true) {
+            x += dx;
+            y += dy;
+            ChessPosition newPosition = new ChessPosition(x, y);
+            if (checkIfBishopRookAbleToMoveTo(board, myPosition, moves, myColor, newPosition)) {
+                break;
+            }
+        }
+    }
+
+    static boolean checkIfBishopRookAbleToMoveTo(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves, ChessGame.TeamColor myColor, ChessPosition newPosition) {
+        if (!newPosition.isValid()) {
+            return true;
+        }
+        ChessPiece piece = board.getPiece(newPosition);
+        if (piece == null ) {
+            moves.add(new ChessMove(myPosition, newPosition, null));
+        } else {
+            if (piece.getTeamColor() != myColor) {
+                moves.add(new ChessMove(myPosition, newPosition, null));
+            }
+            return true;
+        }
+        return false;
     }
 }
