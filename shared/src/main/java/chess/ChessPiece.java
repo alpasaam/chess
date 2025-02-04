@@ -10,24 +10,13 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
+
     private final ChessGame.TeamColor pieceColor;
     private final PieceType type;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.pieceColor = pieceColor;
         this.type = type;
-    }
-
-    /**
-     * The various different chess piece options
-     */
-    public enum PieceType {
-        KING,
-        QUEEN,
-        BISHOP,
-        KNIGHT,
-        ROOK,
-        PAWN
     }
 
     /**
@@ -48,13 +37,10 @@ public class ChessPiece {
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
      * danger
-     * My notes - take into account that you can't move to a square if its has a piece of your own.
-     * you can move to the opponents square if you capture it. Don't make new classes for each piece.
-     * make a PieceMovesCalculator INTERFACE and use switch statements in ChessPiece
-     * under the PieceMovesCalculator, you'll have KingMovesCalculator and all other piece.
+     *
      * @return Collection of valid moves
      */
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    public Collection<ChessMove> pieceMoves(ChessBoard board,  ChessPosition myPosition) {
         PieceMovesCalculator moves = switch(getPieceType()){
             case KING -> new KingMovesCalculator();
             case QUEEN -> new QueenMovesCalculator();
@@ -63,6 +49,18 @@ public class ChessPiece {
             case ROOK -> new RookMovesCalculator();
             case PAWN -> new PawnMovesCalculator();
         };
-        return moves.pieceMoves(board, myPosition);
+        return moves.pieceMoves(board,myPosition);
+    }
+
+    /**
+     * The various different chess piece options
+     */
+    public enum PieceType {
+        KING,
+        QUEEN,
+        BISHOP,
+        KNIGHT,
+        ROOK,
+        PAWN
     }
 }

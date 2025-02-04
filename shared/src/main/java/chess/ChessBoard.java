@@ -10,10 +10,10 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessBoard {
-
-    private final ChessPiece[][] board = new ChessPiece[8][8];
+    ChessPiece[][] board = new ChessPiece[8][8];
 
     public ChessBoard() {
+
     }
 
     /**
@@ -42,14 +42,6 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        // Clear the board
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                board[i][j] = null;
-            }
-        }
-
-        // Set up the pieces for both teams
         for (int i = 1; i <= 8; i++) {
             addPiece(new ChessPosition(2, i), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
             addPiece(new ChessPosition(7, i), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
@@ -64,6 +56,7 @@ public class ChessBoard {
         addPiece(new ChessPosition(1, 7), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
         addPiece(new ChessPosition(1, 8), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
 
+
         addPiece(new ChessPosition(8, 1), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
         addPiece(new ChessPosition(8, 2), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
         addPiece(new ChessPosition(8, 3), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
@@ -72,38 +65,35 @@ public class ChessBoard {
         addPiece(new ChessPosition(8, 6), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
         addPiece(new ChessPosition(8, 7), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
         addPiece(new ChessPosition(8, 8), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
+
     }
+
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                ChessPiece piece = board[i][j];
+                ChessPosition position = new ChessPosition(i + 1, j + 1);
+                ChessPiece piece = getPiece(position);
                 if (piece != null) {
-                    ChessPosition position = new ChessPosition(i + 1, j + 1);
-                    builder.append("Position: ").append(position)
-                            .append(", Piece: ").append(piece.getPieceType())
-                            .append(", Color: ").append(piece.getTeamColor())
-                            .append("\n");
+                    ChessGame.TeamColor color = piece.getTeamColor();
+                    builder.append(position).append(piece.getPieceType()).append(color).append("\n");
                 }
+
             }
+
         }
         return builder.toString();
     }
 
-    /**
-     * @return the board
-     * understand this for the programming exam
-     */
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ChessBoard that)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
+        ChessBoard that = (ChessBoard) o;
         return this.toString().equals(that.toString());
     }
 
