@@ -51,7 +51,7 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
         }
 
 
-        
+
 
 
         return moves;
