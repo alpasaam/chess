@@ -98,6 +98,9 @@ public class ChessGame {
                 board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
             }
         }
+
+
+        
         // Switch turns
         teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
     }
