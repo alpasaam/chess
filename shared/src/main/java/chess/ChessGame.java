@@ -93,14 +93,12 @@ public class ChessGame {
         // Check for pawn promotion
         if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
             int endRow = move.getEndPosition().getRow();
-            if ((piece.getTeamColor() == TeamColor.WHITE && endRow == 8) ||
-                    (piece.getTeamColor() == TeamColor.BLACK && endRow == 1)) {
+            if ((piece.getTeamColor() == TeamColor.WHITE && endRow == 8) || (piece.getTeamColor() == TeamColor.BLACK && endRow == 1)) {
                 board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
             }
         }
 
 
-        
         // Switch turns
         teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
     }
@@ -203,10 +201,7 @@ public class ChessGame {
 
     @Override
     public String toString() {
-        return "ChessGame{" +
-                "board=" + board.toString() +
-                ", teamTurn=" + teamTurn +
-                '}';
+        return "ChessGame{" + "board=" + board.toString() + ", teamTurn=" + teamTurn + '}';
     }
 
     @Override
@@ -227,7 +222,6 @@ public class ChessGame {
      * Enum identifying the 2 possible teams in a chess game
      */
     public enum TeamColor {
-        WHITE,
-        BLACK
+        WHITE, BLACK
     }
 }
