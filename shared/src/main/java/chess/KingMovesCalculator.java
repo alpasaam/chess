@@ -30,9 +30,6 @@ public class KingMovesCalculator implements PieceMovesCalculator {
             }
         }
 
-        // Castling
-
-
         return moves;
     }
 }

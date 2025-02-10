@@ -31,14 +31,13 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
             }
         }
 
-
-        for (int dx: captureDirection){
-            ChessPosition capturePosition = new ChessPosition(myPosition.getRow() +direction, myPosition.getColumn()+dx);
-            if (!capturePosition.isValid()){
+        for (int dx : captureDirection) {
+            ChessPosition capturePosition = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn() + dx);
+            if (!capturePosition.isValid()) {
                 continue;
             }
             ChessPiece piece = board.getPiece(capturePosition);
-            if (piece != null && piece.getTeamColor() !=myColor){
+            if (piece != null && piece.getTeamColor() != myColor) {
                 if (capturePosition.getRow() == promotionRow) {
                     moves.add(new ChessMove(myPosition, capturePosition, ChessPiece.PieceType.QUEEN));
                     moves.add(new ChessMove(myPosition, capturePosition, ChessPiece.PieceType.ROOK));
@@ -49,10 +48,6 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
                 }
             }
         }
-
-
-
-
 
         return moves;
     }
