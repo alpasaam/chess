@@ -114,14 +114,21 @@ public class ChessGame {
                 ChessPosition position = new ChessPosition(i, j);
                 ChessPiece piece = board.getPiece(position);
                 if (piece != null && piece.getTeamColor() != teamColor) {
-                    Collection<ChessMove> moves = piece.pieceMoves(board, position);
-                    for (ChessMove move : moves) {
-                        ChessPiece newPositionPiece = board.getPiece(move.getEndPosition());
-                        if (newPositionPiece != null && newPositionPiece.getPieceType() == ChessPiece.PieceType.KING) {
-                            return true;
-                        }
+                    if (isOpponentKingInCheck(piece, position)) {
+                        return true;
                     }
                 }
+            }
+        }
+        return false;
+    }
+
+    private boolean isOpponentKingInCheck(ChessPiece piece, ChessPosition position) {
+        Collection<ChessMove> moves = piece.pieceMoves(board, position);
+        for (ChessMove move : moves) {
+            ChessPiece newPositionPiece = board.getPiece(move.getEndPosition());
+            if (newPositionPiece != null && newPositionPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                return true;
             }
         }
         return false;
