@@ -15,14 +15,7 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
 
         ChessPosition forwardPosition = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn());
         if (forwardPosition.isValid() && board.getPiece(forwardPosition) == null) {
-            if (forwardPosition.getRow() == promotionRow) {
-                moves.add(new ChessMove(myPosition, forwardPosition, ChessPiece.PieceType.QUEEN));
-                moves.add(new ChessMove(myPosition, forwardPosition, ChessPiece.PieceType.ROOK));
-                moves.add(new ChessMove(myPosition, forwardPosition, ChessPiece.PieceType.BISHOP));
-                moves.add(new ChessMove(myPosition, forwardPosition, ChessPiece.PieceType.KNIGHT));
-            } else {
-                moves.add(new ChessMove(myPosition, forwardPosition, null));
-            }
+            promotePawn(myPosition, moves, promotionRow, forwardPosition);
             ChessPosition doubleForwardPosition = new ChessPosition(myPosition.getRow() + 2 * direction, myPosition.getColumn());
             if (myPosition.getRow() == startRow) {
                 if (board.getPiece(doubleForwardPosition) == null) {
@@ -38,17 +31,21 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
             }
             ChessPiece piece = board.getPiece(capturePosition);
             if (piece != null && piece.getTeamColor() != myColor) {
-                if (capturePosition.getRow() == promotionRow) {
-                    moves.add(new ChessMove(myPosition, capturePosition, ChessPiece.PieceType.QUEEN));
-                    moves.add(new ChessMove(myPosition, capturePosition, ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(myPosition, capturePosition, ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(myPosition, capturePosition, ChessPiece.PieceType.KNIGHT));
-                } else {
-                    moves.add(new ChessMove(myPosition, capturePosition, null));
-                }
+                promotePawn(myPosition, moves, promotionRow, capturePosition);
             }
         }
 
         return moves;
+    }
+
+    private void promotePawn(ChessPosition myPosition, Collection<ChessMove> moves, int promotionRow, ChessPosition forwardPosition) {
+        if (forwardPosition.getRow() == promotionRow) {
+            moves.add(new ChessMove(myPosition, forwardPosition, ChessPiece.PieceType.QUEEN));
+            moves.add(new ChessMove(myPosition, forwardPosition, ChessPiece.PieceType.ROOK));
+            moves.add(new ChessMove(myPosition, forwardPosition, ChessPiece.PieceType.BISHOP));
+            moves.add(new ChessMove(myPosition, forwardPosition, ChessPiece.PieceType.KNIGHT));
+        } else {
+            moves.add(new ChessMove(myPosition, forwardPosition, null));
+        }
     }
 }

@@ -27,5 +27,16 @@ public interface PieceMovesCalculator {
         }
     }
 
+    static void staticMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves, ChessGame.TeamColor myColor, int x, int y) {
+        ChessPosition newPosition = new ChessPosition(x, y);
+        if (!newPosition.isValid()) {
+            return;
+        }
+        ChessPiece piece = board.getPiece(newPosition);
+        if (piece == null || piece.getTeamColor() != myColor) {
+            moves.add(new ChessMove(myPosition, newPosition, null));
+        }
+    }
+
 
 }

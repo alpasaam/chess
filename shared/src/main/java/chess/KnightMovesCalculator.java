@@ -14,14 +14,7 @@ public class KnightMovesCalculator implements PieceMovesCalculator {
         for (int i = 0; i < 8; i++) {
             int x = myPosition.getRow() + dx[i];
             int y = myPosition.getColumn() + dy[i];
-            ChessPosition newPosition = new ChessPosition(x, y);
-            if (!newPosition.isValid()) {
-                continue;
-            }
-            ChessPiece piece = board.getPiece(newPosition);
-            if (piece == null || piece.getTeamColor() != myColor) {
-                moves.add(new ChessMove(myPosition, newPosition, null));
-            }
+            PieceMovesCalculator.staticMoves(board, myPosition, moves, myColor, x, y);
         }
 
 
