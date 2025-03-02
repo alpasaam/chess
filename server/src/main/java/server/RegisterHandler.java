@@ -10,9 +10,4 @@ public class RegisterHandler {
     public RegisterHandler(UserService userService) {
         this.userService = userService;
     }
-
-    public String register(Request req, Response resp) throws Exception {
-        return userService.register(registerRequest);
-    }
-
 }
