@@ -5,7 +5,8 @@ import java.util.Collection;
 public interface PieceMovesCalculator {
     Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition);
 
-    static void directionalMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves, ChessGame.TeamColor myColor, int dx, int dy) {
+    static void directionalMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves,
+                                 ChessGame.TeamColor myColor, int dx, int dy) {
         int x = myPosition.getRow();
         int y = myPosition.getColumn();
         while (true){
