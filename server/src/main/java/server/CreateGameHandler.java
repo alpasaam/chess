@@ -14,11 +14,13 @@ public class CreateGameHandler {
     public CreateGameHandler(Object gameService) {
         this.gameService = (GameService) gameService;
     }
+
+
     public Object createGame(Request request, Response response) throws DataAccessException {
         GameData gamedata = new Gson().fromJson(request.body(), GameData.class);
         String authToken = request.headers("authorization");
         NewGameRequest newGameRequest = new NewGameRequest(authToken, gamedata.gameName());
-        NewGameResponse newGameResponse = gameService.createGame(newGameRequest);
-        return null;
+
+        return new Gson().toJson(gameService.createGame(newGameRequest));
     }
 }

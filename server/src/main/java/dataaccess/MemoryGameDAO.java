@@ -10,7 +10,8 @@ public class MemoryGameDAO implements GameDAO{
     private final HashMap<Integer, GameData> games = new HashMap<>();
 
     public GameData createGame(GameData gameData){
-        gameData = new GameData(nextID++, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+        gameData = new GameData(nextID++, gameData.whiteUsername(), gameData.blackUsername(),
+                gameData.gameName(), gameData.game());
 
         games.put(gameData.gameID(), gameData);
         return gameData;
@@ -25,12 +26,8 @@ public class MemoryGameDAO implements GameDAO{
         return games.get(id);
     }
 
-    public void deletePet(Integer id) {
-        pets.remove(id);
-    }
-
-    public void deleteAllPets() {
-        pets.clear();
+    public void clear() {
+        games.clear();
     }
 
 }

@@ -3,6 +3,7 @@ package service;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
+import model.GameData;
 import model.NewGameRequest;
 import model.NewGameResponse;
 
@@ -19,6 +20,8 @@ public class GameService {
         String authToken = newGameRequest.authToken();
         String gameName = newGameRequest.gameName();
         authDAO.getAuth(authToken);
-        return null;
+        GameData gameData = new GameData(0, "", "", gameName, null);
+        gameData = gameDAO.createGame(gameData);
+        return new NewGameResponse(gameData.gameID());
     }
 }
