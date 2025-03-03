@@ -10,12 +10,11 @@ public class MemoryAuthDAO implements AuthDAO{
 
     @Override
     public void createAuth(AuthData authData) {
-
         auths.putIfAbsent(authData.authToken(), authData);
     }
 
     @Override
-    public AuthData getAuth(String authToken) throws DataAccessException {
+    public AuthData getAuth(String authToken){
         return auths.getOrDefault(authToken, null);
     }
 

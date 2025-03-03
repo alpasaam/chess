@@ -10,8 +10,8 @@ public class MemoryUserDAO implements UserDAO{
 
 
     @Override
-    public void createUser(String username, String password, String email) {
-        users.putIfAbsent(username, new UserData(username, password, email));
+    public void createUser(UserData userData) {
+        users.putIfAbsent(userData.username(), userData);
     }
 
     @Override

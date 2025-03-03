@@ -2,9 +2,7 @@ package service;
 
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
-import model.AuthData;
-import model.LoginRequest;
-import model.LoginResponse;
+import model.*;
 
 import java.util.UUID;
 
@@ -34,4 +32,13 @@ public class UserService {
         return new LoginResponse(username, authToken);
     }
 
+    public RegisterResponse register(RegisterRequest registerRequest) {
+        String username = registerRequest.username();
+        String password = registerRequest.password();
+        String email = registerRequest.email();
+        String authToken = generateToken();
+        userDAO.createUser(new UserData(username, password, email));
+        authDAO.createAuth(new AuthData(authToken, username));
+        return new RegisterResponse(username, authToken);
+    }
 }
