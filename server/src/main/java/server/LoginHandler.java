@@ -10,7 +10,7 @@ import spark.Response;
 
 public class LoginHandler {
 
-    UserService userService;
+    final UserService userService;
 
     public LoginHandler(UserService userService) {
         this.userService = userService;

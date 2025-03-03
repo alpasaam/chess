@@ -11,7 +11,7 @@ import spark.Response;
 
 public class RegisterHandler {
 
-    UserService userService;
+    final UserService userService;
 
     public RegisterHandler(UserService userService) {
         this.userService = userService;

@@ -6,7 +6,7 @@ import spark.Request;
 import spark.Response;
 
 public class LogoutHandler {
-    UserService userService;
+    final UserService userService;
 
     public LogoutHandler(UserService userService) {
         this.userService = userService;
@@ -16,6 +16,6 @@ public class LogoutHandler {
         // call the logout method of the UserService
         userService.logout(req.headers("authorization"));
         // return an empty string
-        return "";
+        return "{}";
     }
 }
