@@ -17,11 +17,13 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         RegisterHandler registerHandler = new RegisterHandler(new UserService(userDAO, authDAO));
         LoginHandler loginHandler = new LoginHandler(new UserService(userDAO, authDAO));
+        LogoutHandler logoutHandler = new LogoutHandler(new UserService(userDAO, authDAO));
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
         Spark.post("/user", registerHandler::register);
         Spark.post("/session", loginHandler::login);
+        Spark.delete("/session", logoutHandler::logout);
 
 
 

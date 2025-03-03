@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.*;
 
@@ -42,8 +43,8 @@ public class UserService {
         return new RegisterResponse(username, authToken);
     }
 
-    public void clear() {
-        userDAO.clear();
-        authDAO.clear();
+    public void logout(String authorization) throws DataAccessException {
+        authDAO.getAuth(authorization);
+        authDAO.deleteAuth(authorization);
     }
 }
