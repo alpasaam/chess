@@ -23,8 +23,18 @@ public class Server {
         Spark.post("/user", registerHandler::register);
         Spark.post("/session", loginHandler::login);
 
+
+
+        Spark.delete("/db", this::clear);
+
         Spark.awaitInitialization();
         return Spark.port();
+    }
+
+    private Object clear(Request request, Response response) {
+        userDAO.clear();
+        authDAO.clear();
+        return "{}";
     }
 
     public void stop() {

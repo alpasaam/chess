@@ -41,4 +41,9 @@ public class UserService {
         authDAO.createAuth(new AuthData(authToken, username));
         return new RegisterResponse(username, authToken);
     }
+
+    public void clear() {
+        userDAO.clear();
+        authDAO.clear();
+    }
 }
