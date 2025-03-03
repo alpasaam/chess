@@ -1,5 +1,10 @@
 package server;
 
+import com.google.gson.Gson;
+import dataaccess.DataAccessException;
+import model.GameData;
+import model.NewGameRequest;
+import model.NewGameResponse;
 import service.GameService;
 import spark.Request;
 import spark.Response;
@@ -9,7 +14,11 @@ public class CreateGameHandler {
     public CreateGameHandler(Object gameService) {
         this.gameService = (GameService) gameService;
     }
-    public Object createGame(Request request, Response response) {
+    public Object createGame(Request request, Response response) throws DataAccessException {
+        GameData gamedata = new Gson().fromJson(request.body(), GameData.class);
+        String authToken = request.headers("authorization");
+        NewGameRequest newGameRequest = new NewGameRequest(authToken, gamedata.gameName());
+        NewGameResponse newGameResponse = gameService.createGame(newGameRequest);
         return null;
     }
 }

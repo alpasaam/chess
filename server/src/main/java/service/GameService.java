@@ -19,7 +19,6 @@ public class GameService {
         String authToken = newGameRequest.authToken();
         String gameName = newGameRequest.gameName();
         authDAO.getAuth(authToken);
-
         return null;
     }
 }
