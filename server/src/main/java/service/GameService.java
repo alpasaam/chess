@@ -1,11 +1,10 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import model.GameData;
-import model.NewGameRequest;
-import model.NewGameResponse;
+import model.*;
 
 import java.util.Collection;
 
@@ -27,8 +26,21 @@ public class GameService {
         String authToken = newGameRequest.authToken();
         String gameName = newGameRequest.gameName();
         authDAO.getAuth(authToken);
-        GameData gameData = new GameData(0, "", "", gameName, null);
+        GameData gameData = new GameData(0, null, null, gameName, null);
         gameData = gameDAO.createGame(gameData);
         return new NewGameResponse(gameData.gameID());
+    }
+
+    public void joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
+        String authToken = joinGameRequest.authToken();
+        String playerColor = joinGameRequest.playerColor();
+        int gameID = joinGameRequest.gameID();
+        AuthData authData = authDAO.getAuth(authToken);
+        GameData gameData = gameDAO.getGame(gameID);
+        if (playerColor.equals("WHITE")){
+            gameDAO.updateGame(new GameData(gameID, authData.username(),gameData.blackUsername(), gameData.gameName(), new ChessGame()));
+        } else {
+            gameDAO.updateGame(new GameData(gameID, gameData.whiteUsername(), authData.username(), gameData.gameName(), new ChessGame()));
+        }
     }
 }

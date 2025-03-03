@@ -31,4 +31,9 @@ public class MemoryGameDAO implements GameDAO{
         nextID = 1;
     }
 
+    @Override
+    public void updateGame(GameData gameData) {
+        games.put(gameData.gameID(), gameData);
+    }
+
 }

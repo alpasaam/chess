@@ -29,7 +29,7 @@ public class UserService {
         // check if password is correct
 
         // create auth token
-        authDAO.createAuth(new AuthData(authToken, username));
+        authDAO.createAuth(new AuthData(username, authToken));
         return new LoginResponse(username, authToken);
     }
 
@@ -39,7 +39,7 @@ public class UserService {
         String email = registerRequest.email();
         String authToken = generateToken();
         userDAO.createUser(new UserData(username, password, email));
-        authDAO.createAuth(new AuthData(authToken, username));
+        authDAO.createAuth(new AuthData(username, authToken));
         return new RegisterResponse(username, authToken);
     }
 
