@@ -8,7 +8,6 @@ import model.NewGameRequest;
 import model.NewGameResponse;
 
 import java.util.Collection;
-import java.util.ListIterator;
 
 public class GameService {
     private final GameDAO gameDAO;

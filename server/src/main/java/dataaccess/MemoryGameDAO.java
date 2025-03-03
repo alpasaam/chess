@@ -28,6 +28,7 @@ public class MemoryGameDAO implements GameDAO{
 
     public void clear() {
         games.clear();
+        nextID = 1;
     }
 
 }

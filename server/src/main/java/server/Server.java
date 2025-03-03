@@ -44,6 +44,7 @@ public class Server {
     private Object clear(Request request, Response response) {
         userDAO.clear();
         authDAO.clear();
+        gameDAO.clear();
         return "{}";
     }
 
