@@ -1,6 +1,7 @@
 package server;
 
 import dataaccess.DataAccessException;
+import exception.ResponseException;
 import service.UserService;
 import spark.Request;
 import spark.Response;
@@ -12,7 +13,7 @@ public class LogoutHandler {
         this.userService = userService;
     }
 
-    public Object logout(Request req, Response res) throws DataAccessException {
+    public Object logout(Request req, Response res) throws ResponseException {
         // call the logout method of the UserService
         userService.logout(req.headers("authorization"));
         // return an empty string

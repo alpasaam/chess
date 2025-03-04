@@ -3,6 +3,7 @@ package service;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
+import exception.ResponseException;
 import model.*;
 
 import java.util.UUID;
@@ -33,17 +34,23 @@ public class UserService {
         return new LoginResponse(username, authToken);
     }
 
-    public RegisterResponse register(RegisterRequest registerRequest) {
+    public RegisterResponse register(RegisterRequest registerRequest) throws ResponseException {
         String username = registerRequest.username();
         String password = registerRequest.password();
         String email = registerRequest.email();
+        if (username == null || password == null || email == null) {
+            throw new ResponseException(400, "Error: bad request");
+        }
+        if (userDAO.getUser(username) != null){
+            throw new ResponseException(403, "Error: already taken");
+        }
         String authToken = generateToken();
         userDAO.createUser(new UserData(username, password, email));
         authDAO.createAuth(new AuthData(username, authToken));
         return new RegisterResponse(username, authToken);
     }
 
-    public void logout(String authorization) throws DataAccessException {
+    public void logout(String authorization) throws ResponseException {
         authDAO.getAuth(authorization);
         authDAO.deleteAuth(authorization);
     }

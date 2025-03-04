@@ -4,6 +4,7 @@ import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
+import exception.ResponseException;
 import model.*;
 
 import java.util.Collection;
@@ -17,12 +18,12 @@ public class GameService {
         this.authDAO = authDAO;
     }
 
-    public Collection<GameData> listGame(String authorization) throws DataAccessException {
+    public Collection<GameData> listGame(String authorization) throws ResponseException {
         authDAO.getAuth(authorization);
         return gameDAO.listGames();
     }
 
-    public NewGameResponse createGame(NewGameRequest newGameRequest) throws DataAccessException {
+    public NewGameResponse createGame(NewGameRequest newGameRequest) throws ResponseException {
         String authToken = newGameRequest.authToken();
         String gameName = newGameRequest.gameName();
         authDAO.getAuth(authToken);
@@ -31,7 +32,7 @@ public class GameService {
         return new NewGameResponse(gameData.gameID());
     }
 
-    public void joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
+    public void joinGame(JoinGameRequest joinGameRequest) throws ResponseException {
         String authToken = joinGameRequest.authToken();
         String playerColor = joinGameRequest.playerColor();
         int gameID = joinGameRequest.gameID();

@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
+import exception.ResponseException;
 import model.GameData;
 import model.NewGameRequest;
 import model.NewGameResponse;
@@ -16,7 +17,7 @@ public class CreateGameHandler {
     }
 
 
-    public Object createGame(Request request, Response response) throws DataAccessException {
+    public Object createGame(Request request, Response response) throws ResponseException {
         GameData gamedata = new Gson().fromJson(request.body(), GameData.class);
         String authToken = request.headers("authorization");
         NewGameRequest newGameRequest = new NewGameRequest(authToken, gamedata.gameName());

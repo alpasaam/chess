@@ -2,6 +2,7 @@ package server;
 
 
 import com.google.gson.Gson;
+import exception.ResponseException;
 import model.RegisterRequest;
 import model.RegisterResponse;
 import model.UserData;
@@ -17,7 +18,7 @@ public class RegisterHandler {
         this.userService = userService;
     }
 
-    public Object register(Request req, Response res) {
+    public Object register(Request req, Response res) throws ResponseException {
         // parse the request body into a UserData object
         UserData userData = new Gson().fromJson(req.body(), UserData.class);
         // create a RegisterRequest object

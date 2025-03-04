@@ -15,12 +15,12 @@ public class MemoryUserDAO implements UserDAO{
     }
 
     @Override
-    public void getUser(String username) {
-        users.getOrDefault(username, null);
+    public UserData getUser(String username) {
+        return users.getOrDefault(username, null);
     }
 
     @Override
-    public void clear(){
+    public void clear() {
         users.clear();
     }
 }

@@ -1,5 +1,6 @@
 package server;
 
+import exception.ResponseException;
 import dataaccess.*;
 import service.GameService;
 import service.UserService;
@@ -34,22 +35,28 @@ public class Server {
         Spark.put("/game", joinGameHandler::joinGame);
 
 
-
         Spark.delete("/db", this::clear);
+
+        Spark.exception(ResponseException.class, this::exceptionHandler);
 
         Spark.awaitInitialization();
         return Spark.port();
     }
 
-    private Object clear(Request request, Response response) {
-        userDAO.clear();
-        authDAO.clear();
-        gameDAO.clear();
-        return "{}";
+    private Object clear(Request request, Response response) throws ResponseException{
+            userDAO.clear();
+            authDAO.clear();
+            gameDAO.clear();
+            return "{}";
     }
 
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
+    }
+
+    private void exceptionHandler(ResponseException ex, Request req, Response res) {
+        res.status(ex.StatusCode());
+        res.body(ex.toJson());
     }
 }
