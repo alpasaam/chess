@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import exception.ResponseException;
 import model.LoginRequest;
 import model.LoginResponse;
 import model.UserData;
@@ -16,7 +17,7 @@ public class LoginHandler {
         this.userService = userService;
     }
 
-    public Object login(Request req, Response res) {
+    public Object login(Request req, Response res) throws ResponseException {
         // parse the request body into a UserData object
         UserData userData = new Gson().fromJson(req.body(), UserData.class);
         // create a LoginRequest object

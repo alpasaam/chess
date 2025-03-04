@@ -21,14 +21,16 @@ public class UserService {
         return UUID.randomUUID().toString();
     }
 
-    public LoginResponse login(LoginRequest loginRequest){
+    public LoginResponse login(LoginRequest loginRequest) throws ResponseException {
         String username = loginRequest.username();
         String password = loginRequest.password();
         String authToken = generateToken();
-        // check if user exists
-
-        // check if password is correct
-
+        if (username == null || password == null) {
+            throw new ResponseException(400, "Error: bad request");
+        }
+        if (userDAO.getUser(username) == null || !userDAO.getUser(username).password().equals(password)) {
+            throw new ResponseException(401, "Error: unauthorized");
+        }
         // create auth token
         authDAO.createAuth(new AuthData(username, authToken));
         return new LoginResponse(username, authToken);
@@ -51,7 +53,14 @@ public class UserService {
     }
 
     public void logout(String authorization) throws ResponseException {
-        authDAO.getAuth(authorization);
+        if (authDAO.getAuth(authorization) == null) {
+            throw new ResponseException(401, "Error: unauthorized");
+        }
         authDAO.deleteAuth(authorization);
+    }
+
+    public void clear() {
+        userDAO.clear();
+        authDAO.clear();
     }
 }

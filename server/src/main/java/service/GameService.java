@@ -19,14 +19,18 @@ public class GameService {
     }
 
     public Collection<GameData> listGame(String authorization) throws ResponseException {
-        authDAO.getAuth(authorization);
+        if (authDAO.getAuth(authorization) == null) {
+            throw new ResponseException(401, "Error: unauthorized");
+        }
         return gameDAO.listGames();
     }
 
     public NewGameResponse createGame(NewGameRequest newGameRequest) throws ResponseException {
         String authToken = newGameRequest.authToken();
         String gameName = newGameRequest.gameName();
-        authDAO.getAuth(authToken);
+        if (authDAO.getAuth(authToken) == null) {
+            throw new ResponseException(401, "Error: unauthorized");
+        }
         GameData gameData = new GameData(0, null, null, gameName, null);
         gameData = gameDAO.createGame(gameData);
         return new NewGameResponse(gameData.gameID());
@@ -38,10 +42,23 @@ public class GameService {
         int gameID = joinGameRequest.gameID();
         AuthData authData = authDAO.getAuth(authToken);
         GameData gameData = gameDAO.getGame(gameID);
+        if (gameData == null || playerColor == null || !playerColor.equals("WHITE") && !playerColor.equals("BLACK")) {
+            throw new ResponseException(400, "Error: bad request");
+        }
+        if (authToken == null || authData == null) {
+            throw new ResponseException(401, "Error: unauthorized");
+        }
+        if (playerColor.equals("WHITE") && gameData.whiteUsername() != null || playerColor.equals("BLACK") && gameData.blackUsername() != null) {
+            throw new ResponseException(403, "Error: already taken");
+        }
         if (playerColor.equals("WHITE")){
             gameDAO.updateGame(new GameData(gameID, authData.username(),gameData.blackUsername(), gameData.gameName(), new ChessGame()));
         } else {
             gameDAO.updateGame(new GameData(gameID, gameData.whiteUsername(), authData.username(), gameData.gameName(), new ChessGame()));
         }
+    }
+
+    public void clear() {
+        gameDAO.clear();
     }
 }

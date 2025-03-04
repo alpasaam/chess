@@ -44,7 +44,10 @@ class GameServiceTest {
     // Negative test case for listGame
     @Test
     void listGame_Negative() {
-        // TODO: Implement negative test case
+        String invalidAuthorization = "invalidAuthToken";
+        assertThrows(ResponseException.class, () -> {
+            gameService.listGame(invalidAuthorization);
+        });
     }
 
     // Positive test case for createGame
@@ -64,7 +67,12 @@ class GameServiceTest {
     // Negative test case for createGame
     @Test
     void createGame_Negative() {
-        // TODO: Implement negative test case
+        String invalidAuthToken = "invalidAuthToken";
+        String gameName = "newGame";
+        NewGameRequest newGameRequest = new NewGameRequest(invalidAuthToken, gameName);
+        assertThrows(ResponseException.class, () -> {
+            gameService.createGame(newGameRequest);
+        });
     }
 
     // Positive test case for joinGame
@@ -84,9 +92,25 @@ class GameServiceTest {
         assertEquals("username", updatedGame.whiteUsername());
     }
 
-    // Negative test case for joinGame
     @Test
     void joinGame_Negative() {
-        // TODO: Implement negative test case
+        String invalidAuthToken = "invalidAuthToken";
+        String playerColor = "WHITE";
+        int gameID = 1;
+        JoinGameRequest joinGameRequest = new JoinGameRequest(invalidAuthToken, playerColor, gameID);
+        assertThrows(ResponseException.class, () -> {
+            gameService.joinGame(joinGameRequest);
+        });
     }
+
+    // Positive test case for clear
+    @Test
+    void clear_Positive() {
+        gameDAO.createGame(new GameData(1, "whitePlayer", "blackPlayer", "gameName", new ChessGame()));
+
+        gameService.clear();
+
+        assertNull(gameDAO.getGame(1));
+    }
+
 }
