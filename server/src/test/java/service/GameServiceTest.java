@@ -29,7 +29,7 @@ class GameServiceTest {
 
     // Positive test case for listGame
     @Test
-    void listGame_Positive() throws ResponseException {
+    void listGamePositive() throws ResponseException {
         String authorization = "validAuthToken";
         authDAO.createAuth(new AuthData("username", authorization));
         gameDAO.createGame(new GameData(1, "whitePlayer", "blackPlayer", "gameName", new ChessGame()));
@@ -43,7 +43,7 @@ class GameServiceTest {
 
     // Negative test case for listGame
     @Test
-    void listGame_Negative() {
+    void listGameNegative() {
         String invalidAuthorization = "invalidAuthToken";
         assertThrows(ResponseException.class, () -> {
             gameService.listGame(invalidAuthorization);
@@ -52,7 +52,7 @@ class GameServiceTest {
 
     // Positive test case for createGame
     @Test
-    void createGame_Positive() throws ResponseException {
+    void createGamePositive() throws ResponseException {
         String authToken = "validAuthToken";
         String gameName = "newGame";
         NewGameRequest newGameRequest = new NewGameRequest(authToken, gameName);
@@ -66,7 +66,7 @@ class GameServiceTest {
 
     // Negative test case for createGame
     @Test
-    void createGame_Negative() {
+    void createGameNegative() {
         String invalidAuthToken = "invalidAuthToken";
         String gameName = "newGame";
         NewGameRequest newGameRequest = new NewGameRequest(invalidAuthToken, gameName);
@@ -77,7 +77,7 @@ class GameServiceTest {
 
     // Positive test case for joinGame
     @Test
-    void joinGame_Positive() throws ResponseException {
+    void joinGamePositive() throws ResponseException {
         String authToken = "validAuthToken";
         String playerColor = "WHITE";
         int gameID = 1;
@@ -92,8 +92,9 @@ class GameServiceTest {
         assertEquals("username", updatedGame.whiteUsername());
     }
 
+    // Negative test case for joinGame
     @Test
-    void joinGame_Negative() {
+    void joinGameNegative() {
         String invalidAuthToken = "invalidAuthToken";
         String playerColor = "WHITE";
         int gameID = 1;
@@ -105,12 +106,11 @@ class GameServiceTest {
 
     // Positive test case for clear
     @Test
-    void clear_Positive() {
+    void clearPositive() {
         gameDAO.createGame(new GameData(1, "whitePlayer", "blackPlayer", "gameName", new ChessGame()));
 
         gameService.clear();
 
         assertNull(gameDAO.getGame(1));
     }
-
 }

@@ -28,7 +28,7 @@ class UserServiceTest {
 
     // Positive test case for generateToken
     @Test
-    void generateToken_Positive() {
+    void generateTokenPositive() {
         String token = UserService.generateToken();
         assertNotNull(token);
         assertFalse(token.isEmpty());
@@ -36,7 +36,7 @@ class UserServiceTest {
 
     // Positive test case for login
     @Test
-    void login_Positive() throws ResponseException {
+    void loginPositive() throws ResponseException {
         String username = "testUser";
         String password = "testPass";
         userDAO.createUser(new UserData(username, password, "test@example.com"));
@@ -51,7 +51,7 @@ class UserServiceTest {
 
     // Negative test case for login (401 error)
     @Test
-    void login_Negative() {
+    void loginNegative() {
         String username = "testUser";
         String password = "wrongPass";
         userDAO.createUser(new UserData(username, "testPass", "test@example.com"));
@@ -64,7 +64,7 @@ class UserServiceTest {
 
     // Positive test case for register
     @Test
-    void register_Positive() throws ResponseException {
+    void registerPositive() throws ResponseException {
         String username = "newUser";
         String password = "newPass";
         String email = "new@example.com";
@@ -79,7 +79,7 @@ class UserServiceTest {
 
     // Negative test case for register (401 error)
     @Test
-    void register_Negative() {
+    void registerNegative() {
         String username = "existingUser";
         String password = "newPass";
         String email = "new@example.com";
@@ -93,7 +93,7 @@ class UserServiceTest {
 
     // Positive test case for logout
     @Test
-    void logout_Positive() throws ResponseException {
+    void logoutPositive() throws ResponseException {
         String authToken = "validAuthToken";
         authDAO.createAuth(new AuthData("username", authToken));
 
@@ -104,7 +104,7 @@ class UserServiceTest {
 
     // Negative test case for logout (401 error)
     @Test
-    void logout_Negative() {
+    void logoutNegative() {
         String invalidAuthToken = "invalidAuthToken";
 
         assertThrows(ResponseException.class, () -> {
@@ -114,7 +114,7 @@ class UserServiceTest {
 
     // Positive test case for clear
     @Test
-    void clear_Positive() {
+    void clearPositive() {
         userDAO.createUser(new UserData("username", "password", "email@example.com"));
         authDAO.createAuth(new AuthData("username", "authToken"));
 
