@@ -57,9 +57,7 @@ class UserServiceTest {
         userDAO.createUser(new UserData(username, "testPass", "test@example.com"));
         LoginRequest loginRequest = new LoginRequest(username, password);
 
-        assertThrows(ResponseException.class, () -> {
-            userService.login(loginRequest);
-        });
+        assertThrows(ResponseException.class, () -> userService.login(loginRequest));
     }
 
     // Positive test case for register
@@ -86,9 +84,7 @@ class UserServiceTest {
         userDAO.createUser(new UserData(username, "existingPass", "existing@example.com"));
         RegisterRequest registerRequest = new RegisterRequest(username, password, email);
 
-        assertThrows(ResponseException.class, () -> {
-            userService.register(registerRequest);
-        });
+        assertThrows(ResponseException.class, () -> userService.register(registerRequest));
     }
 
     // Positive test case for logout
@@ -107,9 +103,7 @@ class UserServiceTest {
     void logoutNegative() {
         String invalidAuthToken = "invalidAuthToken";
 
-        assertThrows(ResponseException.class, () -> {
-            userService.logout(invalidAuthToken);
-        });
+        assertThrows(ResponseException.class, () -> userService.logout(invalidAuthToken));
     }
 
     // Positive test case for clear

@@ -43,7 +43,7 @@ public class Server {
         return Spark.port();
     }
 
-    public Object clear(Request request, Response response) throws ResponseException{
+    public Object clear(Request request, Response response) {
             userDAO.clear();
             authDAO.clear();
             gameDAO.clear();

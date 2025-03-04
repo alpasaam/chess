@@ -45,9 +45,7 @@ class GameServiceTest {
     @Test
     void listGameNegative() {
         String invalidAuthorization = "invalidAuthToken";
-        assertThrows(ResponseException.class, () -> {
-            gameService.listGame(invalidAuthorization);
-        });
+        assertThrows(ResponseException.class, () -> gameService.listGame(invalidAuthorization));
     }
 
     // Positive test case for createGame
@@ -70,9 +68,7 @@ class GameServiceTest {
         String invalidAuthToken = "invalidAuthToken";
         String gameName = "newGame";
         NewGameRequest newGameRequest = new NewGameRequest(invalidAuthToken, gameName);
-        assertThrows(ResponseException.class, () -> {
-            gameService.createGame(newGameRequest);
-        });
+        assertThrows(ResponseException.class, () -> gameService.createGame(newGameRequest));
     }
 
     // Positive test case for joinGame
@@ -99,9 +95,7 @@ class GameServiceTest {
         String playerColor = "WHITE";
         int gameID = 1;
         JoinGameRequest joinGameRequest = new JoinGameRequest(invalidAuthToken, playerColor, gameID);
-        assertThrows(ResponseException.class, () -> {
-            gameService.joinGame(joinGameRequest);
-        });
+        assertThrows(ResponseException.class, () -> gameService.joinGame(joinGameRequest));
     }
 
     // Positive test case for clear
