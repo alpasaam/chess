@@ -35,9 +35,7 @@ class SQLAuthDAOTest {
     void createAuth_DuplicateAuthToken() throws ResponseException {
         AuthData authData = new AuthData("username", "authToken");
         authDAO.createAuth(authData);
-        ResponseException exception = assertThrows(ResponseException.class, () -> {
-            authDAO.createAuth(authData);
-        });
+        ResponseException exception = assertThrows(ResponseException.class, () -> authDAO.createAuth(authData));
         assertEquals(500, exception.statusCode());
     }
 
