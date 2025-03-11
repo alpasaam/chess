@@ -51,7 +51,7 @@ class UserServiceTest {
 
     // Negative test case for login (401 error)
     @Test
-    void loginNegative() {
+    void loginNegative() throws ResponseException {
         String username = "testUser";
         String password = "wrongPass";
         userDAO.createUser(new UserData(username, "testPass", "test@example.com"));
@@ -77,7 +77,7 @@ class UserServiceTest {
 
     // Negative test case for register (401 error)
     @Test
-    void registerNegative() {
+    void registerNegative() throws ResponseException {
         String username = "existingUser";
         String password = "newPass";
         String email = "new@example.com";
@@ -108,7 +108,7 @@ class UserServiceTest {
 
     // Positive test case for clear
     @Test
-    void clearPositive() {
+    void clearPositive() throws ResponseException {
         userDAO.createUser(new UserData("username", "password", "email@example.com"));
         authDAO.createAuth(new AuthData("username", "authToken"));
 
