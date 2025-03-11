@@ -7,9 +7,6 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
-
 public class SQLUserDAO implements UserDAO{
 
     public SQLUserDAO() throws ResponseException {
