@@ -25,7 +25,7 @@ public class SQLUserDAO implements UserDAO{
         var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
         try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+            try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, userData.username());
                 ps.setString(2, hashedPassword);
                 ps.setString(3, userData.email());
@@ -58,8 +58,15 @@ public class SQLUserDAO implements UserDAO{
     }
 
     @Override
-    public void clear() {
-        var statement = "TRUNCATE pet";
+    public void clear() throws ResponseException {
+        var statement = "DELETE FROM users";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(500, String.format("Unable to clear data: %s", e.getMessage()));
+        }
 
 
     }
@@ -70,8 +77,7 @@ public class SQLUserDAO implements UserDAO{
             CREATE TABLE IF NOT EXISTS  users (
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
-              `email` varchar(256) NOT NULL,
-              PRIMARY KEY (`username`)
+              `email` varchar(256) NOT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };

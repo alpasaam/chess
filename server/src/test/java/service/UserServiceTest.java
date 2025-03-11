@@ -21,7 +21,7 @@ class UserServiceTest {
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() throws ResponseException {
         userDAO.clear();
         authDAO.clear();
     }

@@ -58,7 +58,7 @@ public class UserService {
         authDAO.deleteAuth(authorization);
     }
 
-    public void clear() {
+    public void clear() throws ResponseException {
         userDAO.clear();
         authDAO.clear();
     }

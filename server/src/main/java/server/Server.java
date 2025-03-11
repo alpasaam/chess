@@ -6,7 +6,13 @@ import service.GameService;
 import service.UserService;
 import spark.*;
 
+
+
 public class Server {
+
+//    final UserDAO userDAO = new MemoryUserDAO();
+//    final AuthDAO authDAO = new MemoryAuthDAO();
+//    final GameDAO gameDAO = new MemoryGameDAO();
 
     final UserDAO userDAO;
     final AuthDAO authDAO;
@@ -53,7 +59,7 @@ public class Server {
         return Spark.port();
     }
 
-    public Object clear(Request request, Response response) {
+    public Object clear(Request request, Response response) throws ResponseException {
             userDAO.clear();
             authDAO.clear();
             gameDAO.clear();

@@ -10,9 +10,12 @@ import org.mindrot.jbcrypt.BCrypt;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SQLUserDAOTest {
+    SQLUserDAO userDAO;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws ResponseException {
+        userDAO = new SQLUserDAO();
+        userDAO.clear();
     }
 
     @AfterEach
@@ -21,7 +24,6 @@ class SQLUserDAOTest {
 
     @Test
     void createUser_Success() throws ResponseException {
-        SQLUserDAO userDAO = new SQLUserDAO();
         UserData user = new UserData("username", "password", "email@example.com");
         userDAO.createUser(user);
         UserData retrievedUser = userDAO.getUser("username");
