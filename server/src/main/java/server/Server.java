@@ -1,18 +1,15 @@
 package server;
 
-import exception.ResponseException;
 import dataaccess.*;
+import exception.ResponseException;
 import service.GameService;
 import service.UserService;
-import spark.*;
-
+import spark.Request;
+import spark.Response;
+import spark.Spark;
 
 
 public class Server {
-
-//    final UserDAO userDAO = new MemoryUserDAO();
-//    final AuthDAO authDAO = new MemoryAuthDAO();
-//    final GameDAO gameDAO = new MemoryGameDAO();
 
     final UserDAO userDAO;
     final AuthDAO authDAO;
@@ -60,10 +57,10 @@ public class Server {
     }
 
     public Object clear(Request request, Response response) throws ResponseException {
-            userDAO.clear();
-            authDAO.clear();
-            gameDAO.clear();
-            return "{}";
+        userDAO.clear();
+        authDAO.clear();
+        gameDAO.clear();
+        return "{}";
     }
 
     public void stop() {
