@@ -2,7 +2,6 @@ package dataaccess;
 
 import exception.ResponseException;
 import model.AuthData;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +17,7 @@ class SQLAuthDAOTest {
     }
 
     @Test
-    void createAuth_Success() throws ResponseException {
+    void createAuth_Positive() throws ResponseException {
         AuthData authData = new AuthData("username", "authToken");
         authDAO.createAuth(authData);
         AuthData retrievedAuth = authDAO.getAuth("authToken");
@@ -28,7 +27,7 @@ class SQLAuthDAOTest {
     }
 
     @Test
-    void createAuth_DuplicateAuthToken() throws ResponseException {
+    void createAuth_Negative() throws ResponseException {
         AuthData authData = new AuthData("username", "authToken");
         authDAO.createAuth(authData);
         ResponseException exception = assertThrows(ResponseException.class, () -> authDAO.createAuth(authData));
@@ -36,13 +35,23 @@ class SQLAuthDAOTest {
     }
 
     @Test
-    void getAuth_NonExistent() throws ResponseException {
+    void getAuth_Positive() throws ResponseException {
+        AuthData authData = new AuthData("username", "authToken");
+        authDAO.createAuth(authData);
+        AuthData retrievedAuth = authDAO.getAuth("authToken");
+        assertNotNull(retrievedAuth);
+        assertEquals("authToken", retrievedAuth.authToken());
+        assertEquals("username", retrievedAuth.username());
+    }
+
+    @Test
+    void getAuth_Negative() throws ResponseException {
         AuthData authData = authDAO.getAuth("nonexistent");
         assertNull(authData);
     }
 
     @Test
-    void clear_Success() throws ResponseException {
+    void clear_Positive() throws ResponseException {
         AuthData authData = new AuthData("username", "authToken");
         authDAO.createAuth(authData);
         authDAO.clear();

@@ -2,7 +2,6 @@ package dataaccess;
 
 import exception.ResponseException;
 import model.UserData;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
@@ -20,7 +19,7 @@ class SQLUserDAOTest {
 
 
     @Test
-    void createUser_Success() throws ResponseException {
+    void createUser_Positive() throws ResponseException {
         UserData user = new UserData("username", "password", "email@example.com");
         userDAO.createUser(user);
         UserData retrievedUser = userDAO.getUser("username");
@@ -31,7 +30,7 @@ class SQLUserDAOTest {
     }
 
     @Test
-    void createUser_DuplicateUsername() throws ResponseException {
+    void createUser_Negative() throws ResponseException {
         SQLUserDAO userDAO = new SQLUserDAO();
         UserData user = new UserData("username", "password", "email@example.com");
         userDAO.createUser(user);
@@ -42,14 +41,22 @@ class SQLUserDAOTest {
     }
 
     @Test
-    void getUser_NonExistent() throws ResponseException {
+    void getUser_Positive() throws ResponseException {
+        UserData user = new UserData("username", "password", "test@example.com");
+        userDAO.createUser(user);
+        UserData retrievedUser = userDAO.getUser("username");
+        assertNotNull(retrievedUser);
+    }
+
+    @Test
+    void getUser_Negative() throws ResponseException {
         SQLUserDAO userDAO = new SQLUserDAO();
         UserData user = userDAO.getUser("nonexistent");
         assertNull(user);
     }
 
     @Test
-    void clear_Success() throws ResponseException {
+    void clear_Positive() throws ResponseException {
         SQLUserDAO userDAO = new SQLUserDAO();
         UserData user = new UserData("username", "password", "email@example.com");
         userDAO.createUser(user);
