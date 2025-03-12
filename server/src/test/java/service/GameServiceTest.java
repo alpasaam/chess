@@ -101,10 +101,18 @@ class GameServiceTest {
     // Positive test case for clear
     @Test
     void clearPositive() {
-        gameDAO.createGame(new GameData(1, "whitePlayer", "blackPlayer", "gameName", new ChessGame()));
+        try {
+            gameDAO.createGame(new GameData(1, "whitePlayer", "blackPlayer", "gameName", new ChessGame()));
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
 
         gameService.clear();
 
-        assertNull(gameDAO.getGame(1));
+        try {
+            assertNull(gameDAO.getGame(1));
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

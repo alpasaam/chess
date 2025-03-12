@@ -4,7 +4,6 @@ import exception.ResponseException;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
-
 import java.sql.SQLException;
 
 public class SQLUserDAO implements UserDAO{
@@ -20,9 +19,9 @@ public class SQLUserDAO implements UserDAO{
     @Override
     public void createUser(UserData userData) throws ResponseException {
         var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-        String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement)) {
+                var hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
                 ps.setString(1, userData.username());
                 ps.setString(2, hashedPassword);
                 ps.setString(3, userData.email());

@@ -17,10 +17,6 @@ class SQLAuthDAOTest {
         authDAO.clear();
     }
 
-    @AfterEach
-    void tearDown() {
-    }
-
     @Test
     void createAuth_Success() throws ResponseException {
         AuthData authData = new AuthData("username", "authToken");

@@ -1,5 +1,6 @@
 package dataaccess;
 
+import exception.ResponseException;
 import model.GameData;
 
 import java.util.Collection;
@@ -9,7 +10,7 @@ public class MemoryGameDAO implements GameDAO{
     private int nextID = 1;
     private final HashMap<Integer, GameData> games = new HashMap<>();
 
-    public GameData createGame(GameData gameData){
+    public GameData createGame(GameData gameData) throws ResponseException {
         gameData = new GameData(nextID++, gameData.whiteUsername(), gameData.blackUsername(),
                 gameData.gameName(), gameData.game());
 
@@ -17,22 +18,22 @@ public class MemoryGameDAO implements GameDAO{
         return gameData;
     }
 
-    public Collection<GameData> listGames() {
+    public Collection<GameData> listGames() throws ResponseException {
         return games.values();
     }
 
 
-    public GameData getGame(int id) {
+    public GameData getGame(int id) throws ResponseException {
         return games.get(id);
     }
 
-    public void clear() {
+    public void clear() throws ResponseException {
         games.clear();
         nextID = 1;
     }
 
     @Override
-    public void updateGame(GameData gameData) {
+    public void updateGame(GameData gameData) throws ResponseException {
         games.put(gameData.gameID(), gameData);
     }
 

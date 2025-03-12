@@ -34,14 +34,17 @@ class UserServiceTest {
         assertFalse(token.isEmpty());
     }
 
-    // Positive test case for login
     @Test
     void loginPositive() throws ResponseException {
         String username = "testUser";
         String password = "testPass";
-        userDAO.createUser(new UserData(username, password, "test@example.com"));
-        LoginRequest loginRequest = new LoginRequest(username, password);
 
+        // Register the user first
+        RegisterRequest registerRequest = new RegisterRequest(username, password, "test@example.com");
+        userService.register(registerRequest);
+
+        // Attempt to login with the correct password
+        LoginRequest loginRequest = new LoginRequest(username, password);
         LoginResponse response = userService.login(loginRequest);
 
         assertNotNull(response);
@@ -53,10 +56,15 @@ class UserServiceTest {
     @Test
     void loginNegative() throws ResponseException {
         String username = "testUser";
-        String password = "wrongPass";
-        userDAO.createUser(new UserData(username, "testPass", "test@example.com"));
-        LoginRequest loginRequest = new LoginRequest(username, password);
+        String password = "testPass";
+        String wrongPassword = "wrongPass";
 
+        // Register the user first
+        RegisterRequest registerRequest = new RegisterRequest(username, password, "test@example.com");
+        userService.register(registerRequest);
+
+        // Attempt to login with the wrong password
+        LoginRequest loginRequest = new LoginRequest(username, wrongPassword);
         assertThrows(ResponseException.class, () -> userService.login(loginRequest));
     }
 

@@ -18,9 +18,6 @@ class SQLUserDAOTest {
         userDAO.clear();
     }
 
-    @AfterEach
-    void tearDown() {
-    }
 
     @Test
     void createUser_Success() throws ResponseException {

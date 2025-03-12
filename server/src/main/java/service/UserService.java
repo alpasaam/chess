@@ -4,6 +4,7 @@ import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import exception.ResponseException;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public class UserService {
         if (username == null || password == null) {
             throw new ResponseException(400, "Error: bad request");
         }
-        if (userDAO.getUser(username) == null || !userDAO.getUser(username).password().equals(password)) {
+        if (userDAO.getUser(username) == null || !BCrypt.checkpw(password, userDAO.getUser(username).password())) {
             throw new ResponseException(401, "Error: unauthorized");
         }
         // create auth token

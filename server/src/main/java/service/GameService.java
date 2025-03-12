@@ -58,6 +58,10 @@ public class GameService {
     }
 
     public void clear() {
-        gameDAO.clear();
+        try {
+            gameDAO.clear();
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
