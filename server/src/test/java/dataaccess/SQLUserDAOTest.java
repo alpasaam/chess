@@ -32,8 +32,7 @@ class SQLUserDAOTest {
     @Test
     void createUserNegative() throws ResponseException {
         SQLUserDAO userDAO = new SQLUserDAO();
-        UserData user = new UserData("username", "password", "email@example.com");
-        userDAO.createUser(user);
+        UserData user = new UserData(null, "password", "email@example.com");
         ResponseException exception = assertThrows(ResponseException.class, () -> {
             userDAO.createUser(user);
         });
