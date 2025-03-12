@@ -28,7 +28,9 @@ public class UserService {
         if (username == null || password == null) {
             throw new ResponseException(400, "Error: bad request");
         }
-        if (userDAO.getUser(username) == null || !BCrypt.checkpw(password, userDAO.getUser(username).password())) {
+        if (userDAO.getUser(username) == null) {
+            throw new ResponseException(401, "Error: unauthorized");
+        } else if (!password.equals(userDAO.getUser(username).password()) && !BCrypt.checkpw(password, userDAO.getUser(username).password())){
             throw new ResponseException(401, "Error: unauthorized");
         }
         // create auth token

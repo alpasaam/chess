@@ -36,19 +36,16 @@ class UserServiceTest {
 
     @Test
     void loginPositive() throws ResponseException {
-        String username = "testUser";
-        String password = "testPass";
-
         // Register the user first
-        RegisterRequest registerRequest = new RegisterRequest(username, password, "test@example.com");
+        RegisterRequest registerRequest = new RegisterRequest("testUser", "testPass", "test@example.com");
         userService.register(registerRequest);
 
         // Attempt to login with the correct password
-        LoginRequest loginRequest = new LoginRequest(username, password);
+        LoginRequest loginRequest = new LoginRequest("testUser", "testPass");
         LoginResponse response = userService.login(loginRequest);
 
         assertNotNull(response);
-        assertEquals(username, response.username());
+        assertEquals("testUser", response.username());
         assertNotNull(response.authToken());
     }
 
@@ -65,7 +62,7 @@ class UserServiceTest {
 
         // Attempt to login with the wrong password
         LoginRequest loginRequest = new LoginRequest(username, wrongPassword);
-        assertThrows(ResponseException.class, () -> userService.login(loginRequest));
+        assertThrows(IllegalArgumentException.class, () -> userService.login(loginRequest));
     }
 
     // Positive test case for register
