@@ -14,7 +14,19 @@ public class SQLGameDAO implements GameDAO {
 
     public SQLGameDAO() throws ResponseException {
         try {
-            configureDatabase();
+            String[] createStatements = {
+                    """
+            CREATE TABLE IF NOT EXISTS games (
+              gameID int NOT NULL AUTO_INCREMENT,
+              whiteUsername VARCHAR(256),
+              blackUsername VARCHAR(256),
+              gameName VARCHAR(256) NOT NULL,
+              game JSON NOT NULL,
+              PRIMARY KEY (gameID)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+            };
+            BaseSQLDAO.configureDatabase(createStatements);
         } catch (Exception e) {
             throw new ResponseException(500, String.format("Unable to configure database: %s", e.getMessage()));
         }
@@ -130,29 +142,4 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS games (
-              gameID int NOT NULL AUTO_INCREMENT,
-              whiteUsername VARCHAR(256),
-              blackUsername VARCHAR(256),
-              gameName VARCHAR(256) NOT NULL,
-              game JSON NOT NULL,
-              PRIMARY KEY (gameID)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
-    };
-
-    private void configureDatabase() throws ResponseException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
-        }
-    }
 }

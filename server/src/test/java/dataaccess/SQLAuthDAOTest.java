@@ -17,7 +17,7 @@ class SQLAuthDAOTest {
     }
 
     @Test
-    void createAuth_Positive() throws ResponseException {
+    void createAuthPositive() throws ResponseException {
         AuthData authData = new AuthData("username", "authToken");
         authDAO.createAuth(authData);
         AuthData retrievedAuth = authDAO.getAuth("authToken");
@@ -27,7 +27,7 @@ class SQLAuthDAOTest {
     }
 
     @Test
-    void createAuth_Negative() throws ResponseException {
+    void createAuthNegative() throws ResponseException {
         AuthData authData = new AuthData("username", "authToken");
         authDAO.createAuth(authData);
         ResponseException exception = assertThrows(ResponseException.class, () -> authDAO.createAuth(authData));
@@ -35,7 +35,7 @@ class SQLAuthDAOTest {
     }
 
     @Test
-    void getAuth_Positive() throws ResponseException {
+    void getAuthPositive() throws ResponseException {
         AuthData authData = new AuthData("username", "authToken");
         authDAO.createAuth(authData);
         AuthData retrievedAuth = authDAO.getAuth("authToken");
@@ -45,13 +45,13 @@ class SQLAuthDAOTest {
     }
 
     @Test
-    void getAuth_Negative() throws ResponseException {
+    void getAuthNegative() throws ResponseException {
         AuthData authData = authDAO.getAuth("nonexistent");
         assertNull(authData);
     }
 
     @Test
-    void clear_Positive() throws ResponseException {
+    void clearPositive() throws ResponseException {
         AuthData authData = new AuthData("username", "authToken");
         authDAO.createAuth(authData);
         authDAO.clear();

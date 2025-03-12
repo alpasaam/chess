@@ -19,7 +19,7 @@ class SQLUserDAOTest {
 
 
     @Test
-    void createUser_Positive() throws ResponseException {
+    void createUserPositive() throws ResponseException {
         UserData user = new UserData("username", "password", "email@example.com");
         userDAO.createUser(user);
         UserData retrievedUser = userDAO.getUser("username");
@@ -30,7 +30,7 @@ class SQLUserDAOTest {
     }
 
     @Test
-    void createUser_Negative() throws ResponseException {
+    void createUserNegative() throws ResponseException {
         SQLUserDAO userDAO = new SQLUserDAO();
         UserData user = new UserData("username", "password", "email@example.com");
         userDAO.createUser(user);
@@ -41,7 +41,7 @@ class SQLUserDAOTest {
     }
 
     @Test
-    void getUser_Positive() throws ResponseException {
+    void getUserPositive() throws ResponseException {
         UserData user = new UserData("username", "password", "test@example.com");
         userDAO.createUser(user);
         UserData retrievedUser = userDAO.getUser("username");
@@ -49,14 +49,14 @@ class SQLUserDAOTest {
     }
 
     @Test
-    void getUser_Negative() throws ResponseException {
+    void getUserNegative() throws ResponseException {
         SQLUserDAO userDAO = new SQLUserDAO();
         UserData user = userDAO.getUser("nonexistent");
         assertNull(user);
     }
 
     @Test
-    void clear_Positive() throws ResponseException {
+    void clearPositive() throws ResponseException {
         SQLUserDAO userDAO = new SQLUserDAO();
         UserData user = new UserData("username", "password", "email@example.com");
         userDAO.createUser(user);

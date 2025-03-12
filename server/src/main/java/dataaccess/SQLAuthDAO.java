@@ -9,7 +9,16 @@ public class SQLAuthDAO implements AuthDAO{
 
     public SQLAuthDAO() throws ResponseException {
         try {
-            configureDatabase();
+            String[] createStatements = {
+                    """
+            CREATE TABLE IF NOT EXISTS  auths (
+              `authToken` varchar(256) NOT NULL,
+              `username` varchar(256) NOT NULL,
+              PRIMARY KEY (`authToken`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+            };
+            BaseSQLDAO.configureDatabase(createStatements);
         } catch (Exception e) {
             throw new ResponseException(500, String.format("Unable to configure database: %s", e.getMessage()));
         }
@@ -75,28 +84,6 @@ public class SQLAuthDAO implements AuthDAO{
     }
 
 
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS  auths (
-              `authToken` varchar(256) NOT NULL,
-              `username` varchar(256) NOT NULL,
-              PRIMARY KEY (`authToken`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
-    };
-
-    private void configureDatabase() throws ResponseException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
-        }
-    }
 }
 
 
