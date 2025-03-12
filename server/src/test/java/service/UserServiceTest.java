@@ -40,7 +40,7 @@ class UserServiceTest {
         RegisterRequest registerRequest = new RegisterRequest("testUser", "testPass", "test@example.com");
         userService.register(registerRequest);
 
-        // Attempt to login with the correct password
+        // Attempt to log in with the correct password
         LoginRequest loginRequest = new LoginRequest("testUser", "testPass");
         LoginResponse response = userService.login(loginRequest);
 
@@ -60,7 +60,7 @@ class UserServiceTest {
         RegisterRequest registerRequest = new RegisterRequest(username, password, "test@example.com");
         userService.register(registerRequest);
 
-        // Attempt to login with the wrong password
+        // Attempt to log in with the wrong password
         LoginRequest loginRequest = new LoginRequest(username, wrongPassword);
         assertThrows(IllegalArgumentException.class, () -> userService.login(loginRequest));
     }
