@@ -22,29 +22,35 @@ public class ServerFacade {
     }
 
     public RegisterResponse register(RegisterRequest registerRequest) throws ResponseException {
-        var path = "/register";
+        var path = "/user";
         return this.makeRequest("POST", path, registerRequest, RegisterResponse.class);
     }
 
-    public LoginResponse login(LoginRequest loginRequest){
-        return null;
+    public LoginResponse login(LoginRequest loginRequest) throws ResponseException {
+        var path = "/session";
+        return this.makeRequest("POST", path, loginRequest, LoginResponse.class);
     }
 
     public void logout(String authorization){
+        var path = "/session";
     }
 
     public Collection<GameData> listGames(String authorization){
+        var path = "/game";
         return null;
     }
 
     public NewGameResponse createGame(NewGameRequest newGameRequest){
+        var path = "/game";
         return null;
     }
 
     public void joinGame(JoinGameRequest joinGameRequest){
+        var path = "/game";
     }
 
     public void clear(){
+        var path = "/db";
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
