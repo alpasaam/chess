@@ -46,4 +46,17 @@ public class ServerFacadeTests {
         var authData = facade.register(new RegisterRequest ("", "", ""));
         assertThrows(ResponseException.class, () -> facade.register(new RegisterRequest ("", "", "")));
     }
+
+    @Test
+    public void loginPositive() throws ResponseException {
+        var authData = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        var loginResponse = facade.login(new LoginRequest("player1", "password"));
+        assertTrue(loginResponse.authToken().length() > 10);
+    }
+
+    @Test
+    public void loginNegative() throws ResponseException {
+        var authData = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        assertThrows(ResponseException.class, () -> facade.login(new LoginRequest("player1", "wrongPassword")));
+    }
 }
