@@ -1,6 +1,6 @@
 package ui;
 
-public class ChessBoard {
+public class GamePlayUI {
     // create the board in this class
     //make a main method to see what the board looks like when coding it
     // follow tic tak toe
