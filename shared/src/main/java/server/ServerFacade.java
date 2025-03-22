@@ -23,21 +23,25 @@ public class ServerFacade {
 
     public RegisterResponse register(RegisterRequest registerRequest) throws ResponseException {
         var path = "/user";
-        return this.makeRequest("POST", path, registerRequest, RegisterResponse.class);
+        return this.makeRequest("POST", path, registerRequest, RegisterResponse.class, null);
     }
 
     public LoginResponse login(LoginRequest loginRequest) throws ResponseException {
         var path = "/session";
-        return this.makeRequest("POST", path, loginRequest, LoginResponse.class);
+        return this.makeRequest("POST", path, loginRequest, LoginResponse.class, null);
     }
 
-    public void logout(String authorization){
+    public void logout(String authorization) throws ResponseException {
         var path = "/session";
+        this.makeRequest("DELETE", path, null, null, authorization);
     }
 
-    public Collection<GameData> listGames(String authorization){
+    public Collection<GameData> listGames(String authorization) throws ResponseException {
         var path = "/game";
-        return null;
+        record ListGameResponse(Collection<GameData> games) {
+        }
+        this.makeRequest("GET", path, null, ListGameResponse.class, authorization);
+
     }
 
     public NewGameResponse createGame(NewGameRequest newGameRequest){
@@ -49,16 +53,22 @@ public class ServerFacade {
         var path = "/game";
     }
 
-    public void clear(){
+    public void clear() throws ResponseException {
         var path = "/db";
+        this.makeRequest("DELETE", path, null, null, null);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authorization) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+
+            if (authorization != null) {
+                http.setRequestProperty("Authorization", authorization);
+            }
 
             writeBody(request, http);
             http.connect();
@@ -70,6 +80,7 @@ public class ServerFacade {
             throw new ResponseException(500, ex.getMessage());
         }
     }
+
 
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
