@@ -40,7 +40,8 @@ public class ServerFacade {
         var path = "/game";
         record ListGameResponse(Collection<GameData> games) {
         }
-        this.makeRequest("GET", path, null, ListGameResponse.class, authorization);
+        var response = this.makeRequest("GET", path, null, ListGameResponse.class, authorization);
+        return response.games();
 
     }
 
