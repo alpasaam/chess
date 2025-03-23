@@ -47,7 +47,7 @@ public class ServerFacade {
 
     public NewGameResponse createGame(NewGameRequest newGameRequest) throws ResponseException {
         var path = "/game";
-        return this.makeRequest("POST", path, newGameRequest, NewGameResponse.class, null);
+        return this.makeRequest("POST", path, newGameRequest, NewGameResponse.class, newGameRequest.authToken());
     }
 
     public void joinGame(JoinGameRequest joinGameRequest) throws ResponseException {

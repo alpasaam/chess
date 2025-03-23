@@ -6,10 +6,7 @@ import dataaccess.GameDAO;
 import dataaccess.SQLAuthDAO;
 import dataaccess.SQLGameDAO;
 import exception.ResponseException;
-import model.AuthData;
-import model.GameData;
-import model.LoginRequest;
-import model.RegisterRequest;
+import model.*;
 import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
@@ -106,12 +103,23 @@ public class ServerFacadeTests {
 
     @Test
     public void createGamePositive() throws ResponseException{
+        AuthDAO authDAO = new SQLAuthDAO();
+        String authToken = "validAuthToken";
+        String gameName = "newGame";
+        NewGameRequest newGameRequest = new NewGameRequest(authToken, gameName);
+        authDAO.createAuth(new AuthData("username", authToken));
 
+        NewGameResponse result = facade.createGame(newGameRequest);
+
+        assertNotNull(result);
     }
 
     @Test
     public void createGameNegative() throws ResponseException{
-
+        String invalidAuthToken = "invalidAuthToken";
+        String gameName = "newGame";
+        NewGameRequest newGameRequest = new NewGameRequest(invalidAuthToken, gameName);
+        assertThrows(ResponseException.class, () -> facade.createGame(newGameRequest));
     }
 
     @Test
@@ -122,6 +130,14 @@ public class ServerFacadeTests {
     @Test
     public void joinGameNegative() throws ResponseException{
 
+    }
+
+    @Test
+    public void clearPositive() throws ResponseException {
+        GameDAO gameDAO = new SQLGameDAO();
+        gameDAO.createGame(new GameData(1, "whitePlayer", "blackPlayer", "gameName", new ChessGame()));
+        facade.clear();
+        assertNull(gameDAO.getGame(1));
     }
 
 
