@@ -1,14 +1,22 @@
 package client;
 
+import chess.ChessGame;
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
+import dataaccess.SQLAuthDAO;
+import dataaccess.SQLGameDAO;
 import exception.ResponseException;
+import model.AuthData;
+import model.GameData;
 import model.LoginRequest;
 import model.RegisterRequest;
 import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Collection;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
@@ -49,14 +57,72 @@ public class ServerFacadeTests {
 
     @Test
     public void loginPositive() throws ResponseException {
-        var authData = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
         var loginResponse = facade.login(new LoginRequest("player1", "password"));
         assertTrue(loginResponse.authToken().length() > 10);
     }
 
     @Test
     public void loginNegative() throws ResponseException {
-        var authData = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
         assertThrows(ResponseException.class, () -> facade.login(new LoginRequest("player1", "wrongPassword")));
     }
+
+    @Test
+    public void logoutPositive() throws ResponseException{
+        AuthDAO authDAO = new SQLAuthDAO();
+        String authToken = "validAuth";
+        authDAO.createAuth(new AuthData("username", authToken));
+        facade.logout(authToken);
+        assertNull(authDAO.getAuth(authToken));
+    }
+
+    @Test
+    public void logoutNegative() throws ResponseException{
+        String invalidAuthToken = "invalidAuthToken";
+        assertThrows(ResponseException.class, () -> facade.logout(invalidAuthToken));
+    }
+
+    @Test
+    public void listGamesPositive() throws ResponseException{
+        AuthDAO authDAO = new SQLAuthDAO();
+        GameDAO gameDAO = new SQLGameDAO();
+        String authorization = "validAuthToken";
+        authDAO.createAuth(new AuthData("username", authorization));
+        gameDAO.createGame(new GameData(1, "whitePlayer", "blackPlayer", "gameName", new ChessGame()));
+
+        Collection<GameData> result = facade.listGames(authorization);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void listGamesNegative() throws ResponseException{
+        String invalidAuthorization = "invalidAuthToken";
+        assertThrows(ResponseException.class, () -> facade.listGames(invalidAuthorization));
+    }
+
+    @Test
+    public void createGamePositive() throws ResponseException{
+
+    }
+
+    @Test
+    public void createGameNegative() throws ResponseException{
+
+    }
+
+    @Test
+    public void joinGamePositive() throws ResponseException{
+
+    }
+
+    @Test
+    public void joinGameNegative() throws ResponseException{
+
+    }
+
+
 }
