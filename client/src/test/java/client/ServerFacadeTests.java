@@ -7,7 +7,10 @@ import dataaccess.SQLAuthDAO;
 import dataaccess.SQLGameDAO;
 import exception.ResponseException;
 import model.*;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import server.Server;
 import server.ServerFacade;
 
@@ -29,27 +32,26 @@ public class ServerFacadeTests {
         facade = new ServerFacade("http://localhost:" + port);
     }
 
-    @BeforeEach
-    public void clear() throws ResponseException {
-        facade.clear();
-    }
-
     @AfterAll
     static void stopServer() {
         server.stop();
     }
 
+    @BeforeEach
+    public void clear() throws ResponseException {
+        facade.clear();
+    }
 
     @Test
     public void registerPositive() throws ResponseException {
-        var authData = facade.register(new RegisterRequest ("player1", "password", "p1@email.com"));
+        var authData = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
         assertTrue(authData.authToken().length() > 10);
     }
 
     @Test
     public void registerNegative() throws ResponseException {
-        var authData = facade.register(new RegisterRequest ("", "", ""));
-        assertThrows(ResponseException.class, () -> facade.register(new RegisterRequest ("", "", "")));
+        var authData = facade.register(new RegisterRequest("", "", ""));
+        assertThrows(ResponseException.class, () -> facade.register(new RegisterRequest("", "", "")));
     }
 
     @Test
@@ -66,7 +68,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void logoutPositive() throws ResponseException{
+    public void logoutPositive() throws ResponseException {
         AuthDAO authDAO = new SQLAuthDAO();
         String authToken = "validAuth";
         authDAO.createAuth(new AuthData("username", authToken));
@@ -75,13 +77,13 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void logoutNegative() throws ResponseException{
+    public void logoutNegative() throws ResponseException {
         String invalidAuthToken = "invalidAuthToken";
         assertThrows(ResponseException.class, () -> facade.logout(invalidAuthToken));
     }
 
     @Test
-    public void listGamesPositive() throws ResponseException{
+    public void listGamesPositive() throws ResponseException {
         AuthDAO authDAO = new SQLAuthDAO();
         GameDAO gameDAO = new SQLGameDAO();
         String authorization = "validAuthToken";
@@ -96,13 +98,13 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void listGamesNegative() throws ResponseException{
+    public void listGamesNegative() throws ResponseException {
         String invalidAuthorization = "invalidAuthToken";
         assertThrows(ResponseException.class, () -> facade.listGames(invalidAuthorization));
     }
 
     @Test
-    public void createGamePositive() throws ResponseException{
+    public void createGamePositive() throws ResponseException {
         AuthDAO authDAO = new SQLAuthDAO();
         String authToken = "validAuthToken";
         String gameName = "newGame";
@@ -115,7 +117,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void createGameNegative() throws ResponseException{
+    public void createGameNegative() throws ResponseException {
         String invalidAuthToken = "invalidAuthToken";
         String gameName = "newGame";
         NewGameRequest newGameRequest = new NewGameRequest(invalidAuthToken, gameName);
@@ -123,12 +125,12 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void joinGamePositive() throws ResponseException{
+    public void joinGamePositive() throws ResponseException {
 
     }
 
     @Test
-    public void joinGameNegative() throws ResponseException{
+    public void joinGameNegative() throws ResponseException {
 
     }
 

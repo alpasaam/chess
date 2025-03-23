@@ -50,8 +50,8 @@ public class GameService {
         if (playerColor.equals("WHITE") && gameData.whiteUsername() != null || playerColor.equals("BLACK") && gameData.blackUsername() != null) {
             throw new ResponseException(403, "Error: already taken");
         }
-        if (playerColor.equals("WHITE")){
-            gameDAO.updateGame(new GameData(gameID, authData.username(),gameData.blackUsername(), gameData.gameName(), new ChessGame()));
+        if (playerColor.equals("WHITE")) {
+            gameDAO.updateGame(new GameData(gameID, authData.username(), gameData.blackUsername(), gameData.gameName(), new ChessGame()));
         } else {
             gameDAO.updateGame(new GameData(gameID, gameData.whiteUsername(), authData.username(), gameData.gameName(), new ChessGame()));
         }
