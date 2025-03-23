@@ -28,7 +28,7 @@ public class GamePlayUI {
 
         out.print(ERASE_SCREEN);
 
-        drawChessBoard(out, true, chessBoard); // Draw board for white player
+        drawChessBoard(out, false, chessBoard); // Draw board for white player
 
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
@@ -47,8 +47,8 @@ public class GamePlayUI {
                 out.print(columnLabel);
             }
         } else {
-            for (char col = 'H'; col >= 'A'; --col) {
-                out.print(col);
+            for (int i = columnLabels.length - 1; i >= 0; i--) {
+                out.print(columnLabels[i]);
             }
         }
         out.print("   ");
@@ -132,11 +132,5 @@ public class GamePlayUI {
                 case PAWN -> BLACK_PAWN;
             };
         }
-    }
-
-    private static ChessPiece getChessPiece(int row, int col) {
-        // This method should return the appropriate ChessPiece object based on the row and column.
-        // For now, it returns null to indicate an empty square.
-        return null;
     }
 }
