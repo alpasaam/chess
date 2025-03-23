@@ -126,12 +126,30 @@ public class ServerFacadeTests {
 
     @Test
     public void joinGamePositive() throws ResponseException {
+        AuthDAO authDAO = new SQLAuthDAO();
+        GameDAO gameDAO = new SQLGameDAO();
+        String authToken = "validAuthToken";
+        String playerColor = "WHITE";
+        int gameID = 1;
+        authDAO.createAuth(new AuthData("username", authToken));
+        GameData gameData = gameDAO.createGame(new GameData(gameID, null, null, "gameName", new ChessGame()));
+        int newGameID = gameData.gameID();
+        JoinGameRequest joinGameRequest = new JoinGameRequest(authToken, playerColor, newGameID);
 
+        facade.joinGame(joinGameRequest);
+
+        GameData updatedGame = gameDAO.getGame(newGameID);
+        assertNotNull(updatedGame);
+        assertEquals("username", updatedGame.whiteUsername());
     }
 
     @Test
     public void joinGameNegative() throws ResponseException {
-
+        String invalidAuthToken = "invalidAuthToken";
+        String playerColor = "WHITE";
+        int gameID = 1;
+        JoinGameRequest joinGameRequest = new JoinGameRequest(invalidAuthToken, playerColor, gameID);
+        assertThrows(ResponseException.class, () -> facade.joinGame(joinGameRequest));
     }
 
     @Test

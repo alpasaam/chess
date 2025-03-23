@@ -28,7 +28,7 @@ public class GamePlayUI {
 
         out.print(ERASE_SCREEN);
 
-        drawChessBoard(out, false, chessBoard); // Draw board for white player
+        drawChessBoard(out, true, chessBoard); // Draw board for white player
 
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
