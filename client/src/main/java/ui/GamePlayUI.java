@@ -51,6 +51,8 @@ public class GamePlayUI {
                 out.print(col);
             }
         }
+        out.print("   ");
+        setBlack(out);
         out.println();
     }
 
@@ -79,6 +81,9 @@ public class GamePlayUI {
                 printPiece(out, chessBoard.getPiece(new ChessPosition(row + 1, col + 1))); // Use chessBoard to get piece
                 setBlack(out);
             }
+            setGrey(out);
+            out.print(" " + (isWhitePlayer ? boardRow + 1 : BOARD_SIZE_IN_SQUARES - boardRow) + " "); // Print row number at the end
+            setBlack(out);
             out.println();
         }
     }
