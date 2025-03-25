@@ -34,10 +34,6 @@ public class PostloginUI {
         System.out.println();
     }
 
-    private void printPrompt() {
-        System.out.print("\n>>> ");
-    }
-
     private String eval(String input) throws ResponseException {
         var result = "Invalid input";
         var tokens = input.toLowerCase().split(" ");
@@ -54,6 +50,10 @@ public class PostloginUI {
             };
         }
         return result;
+    }
+
+    private void printPrompt() {
+        System.out.print("\n>>> ");
     }
 
     private String help() {
