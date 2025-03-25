@@ -52,16 +52,18 @@ public class GamePlayUI {
             }
         }
         out.print("   ");
-        setBlack(out);
+        setDefault(out);
         out.println();
     }
 
     public static void drawChessBoard(PrintStream out, boolean isWhitePlayer, ChessBoard chessBoard) {
+        setDefault(out);
         drawHeader(out, isWhitePlayer);
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
             drawRowOfSquares(out, boardRow, isWhitePlayer, chessBoard);
         }
         drawHeader(out, isWhitePlayer);
+        setDefault(out);
     }
 
     private static void drawRowOfSquares(PrintStream out, int boardRow, boolean isWhitePlayer, ChessBoard chessBoard) {
@@ -83,7 +85,7 @@ public class GamePlayUI {
             }
             setGrey(out);
             out.print(" " + (isWhitePlayer ? boardRow + 1 : BOARD_SIZE_IN_SQUARES - boardRow) + " "); // Print row number at the end
-            setBlack(out);
+            setDefault(out);
             out.println();
         }
     }
@@ -101,6 +103,11 @@ public class GamePlayUI {
     private static void setGrey(PrintStream out) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
+    }
+
+    private static void setDefault (PrintStream out){
+        out.print(RESET_BG_COLOR);
+        out.print(RESET_TEXT_COLOR);
     }
 
     private static void printPiece(PrintStream out, ChessPiece piece) {

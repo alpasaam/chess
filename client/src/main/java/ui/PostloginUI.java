@@ -3,10 +3,7 @@ package ui;
 import exception.ResponseException;
 import model.GameData;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class PostloginUI {
     private final Scanner scanner = new Scanner(System.in);
@@ -79,7 +76,7 @@ public class PostloginUI {
             preloginUI.run();
             return "logout";
         } catch (Exception e) {
-            throw new ResponseException(400, "Logout failed: " + e.getMessage());
+            throw new ResponseException(400, "Logout failed: Unable to log out due to server error.");
         }
     }
 
@@ -90,7 +87,7 @@ public class PostloginUI {
             client.createGame(gameName, authToken);
             return "Game created successfully!";
         } catch (Exception e) {
-            throw new ResponseException(400, "Game creation failed: " + e.getMessage());
+            throw new ResponseException(400, "Game creation failed: Unable to create a new game due to server error.");
         }
     }
 
@@ -99,10 +96,9 @@ public class PostloginUI {
             games = client.listGames(authToken);
             if (games != null && !games.isEmpty()) {
                 StringBuilder result = new StringBuilder("Games:\n");
-                for (int i = 0; i < games.size(); i++) {
-                    List<GameData> gameList = new ArrayList<>(games);
-                    GameData game = gameList.get(i);
-                    result.append(i + 1)
+                int index = 1;
+                for (GameData game : games) {
+                    result.append(index++)
                             .append(". ")
                             .append(game.gameName())
                             .append(" - Players: ")
@@ -116,7 +112,7 @@ public class PostloginUI {
                 return "No games available.";
             }
         } catch (Exception e) {
-            throw new ResponseException(400, "Failed to list games: " + e.getMessage());
+            throw new ResponseException(400, "Failed to list games: Unable to retrieve game list from server.");
         }
     }
 
@@ -127,20 +123,23 @@ public class PostloginUI {
             }
 
             int gameNumber = Integer.parseInt(tokens[1]);
-            String color = tokens[2];
+            String color = tokens[2].toUpperCase();
 
             if (gameNumber < 1 || gameNumber > games.size()) {
-                throw new ResponseException(400, "Invalid game number.");
+                throw new ResponseException(400, "Invalid game number: The specified game number is out of range.");
             }
 
             List<GameData> gameList = new ArrayList<>(games);
             GameData game = gameList.get(gameNumber - 1);
             client.joinGame(authToken, color, game.gameID());
+
+            GamePlayUI.drawChessBoard(System.out, true, game.game().getBoard());
+
             return "Joined game successfully!";
         } catch (NumberFormatException e) {
-            throw new ResponseException(400, "Invalid game number.");
+            throw new ResponseException(400, "Invalid game number: The game number must be an integer.");
         } catch (Exception e) {
-            throw new ResponseException(400, "Failed to join game: " + e.getMessage());
+            throw new ResponseException(400, "Failed to join game: Unable to join the game due to server error.");
         }
     }
 
@@ -153,7 +152,7 @@ public class PostloginUI {
             int gameNumber = Integer.parseInt(tokens[1]);
 
             if (gameNumber < 1 || gameNumber > games.size()) {
-                throw new ResponseException(400, "Invalid game number.");
+                throw new ResponseException(400, "Invalid game number: The specified game number is out of range.");
             }
 
             List<GameData> gameList = new ArrayList<>(games);
@@ -161,9 +160,9 @@ public class PostloginUI {
             client.observeGame(game.gameID(), authToken);
             return "Observing game successfully!";
         } catch (NumberFormatException e) {
-            throw new ResponseException(400, "Invalid game number.");
+            throw new ResponseException(400, "Invalid game number: The game number must be an integer.");
         } catch (Exception e) {
-            throw new ResponseException(400, "Failed to observe game: " + e.getMessage());
+            throw new ResponseException(400, "Failed to observe game: Unable to observe the game due to server error.");
         }
     }
 }

@@ -25,7 +25,7 @@ public class PreloginUI {
             try {
                 result = eval(line);
                 System.out.print(result);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 System.out.print(e.getMessage());
             }
         }
@@ -77,7 +77,7 @@ public class PreloginUI {
             postloginUI.run();
             return "login";
         } catch (Exception e) {
-            throw new ResponseException(400, "Login failed: " + e.getMessage());
+            throw new ResponseException(400, "Login failed: Unable to log in due to server error.");
         }
     }
 
@@ -93,7 +93,7 @@ public class PreloginUI {
             client.register(username, password, email);
             return "Registration successful! Please login.";
         } catch (Exception e) {
-            throw new ResponseException(400, "Registration failed: " + e.getMessage());
+            throw new ResponseException(400, "Registration failed: Unable to register due to server error.");
         }
     }
 }
