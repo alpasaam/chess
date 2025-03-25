@@ -77,7 +77,7 @@ public class PreloginUI {
             postloginUI.run();
             return "login";
         } catch (Exception e) {
-            throw new ResponseException(400, "Login failed: Unable to log in due to server error.");
+            throw new ResponseException(400, "Login failed: Unable to log in. Check username and password.");
         }
     }
 
@@ -93,7 +93,7 @@ public class PreloginUI {
             client.register(username, password, email);
             return "Registration successful! Please login.";
         } catch (Exception e) {
-            throw new ResponseException(400, "Registration failed: Unable to register due to server error.");
+            throw new ResponseException(400, "Registration failed: Enter valid username, password and email.");
         }
     }
 }

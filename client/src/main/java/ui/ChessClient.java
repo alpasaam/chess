@@ -3,7 +3,6 @@ package ui;
 import chess.ChessBoard;
 import exception.ResponseException;
 import model.*;
-import server.ServerFacade;
 
 import java.util.Collection;
 

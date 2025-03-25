@@ -63,8 +63,8 @@ public class PostloginUI {
                 - logout: Logs out the user.
                 - create: Allows the user to create a new game.
                 - list: Lists all the games that currently exist on the server.
-                - play: Allows the user to join a game.
-                - observe: Allows the user to observe a game.
+                - play <game number> <color>: Allows the user to join a game.
+                - observe <game number>: Allows the user to observe a game.
                 """;
     }
 

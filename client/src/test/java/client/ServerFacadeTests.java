@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.Server;
-import server.ServerFacade;
+import ui.ServerFacade;
 
 import java.util.Collection;
 
