@@ -56,7 +56,7 @@ public class GamePlayUI {
         out.println();
     }
 
-    private static void drawChessBoard(PrintStream out, boolean isWhitePlayer, ChessBoard chessBoard) {
+    public static void drawChessBoard(PrintStream out, boolean isWhitePlayer, ChessBoard chessBoard) {
         drawHeader(out, isWhitePlayer);
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
             drawRowOfSquares(out, boardRow, isWhitePlayer, chessBoard);

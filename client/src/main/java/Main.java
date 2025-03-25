@@ -1,4 +1,5 @@
 import chess.*;
+import ui.ChessClient;
 
 public class Main {
     public static void main(String[] args) {
@@ -12,5 +13,12 @@ public class Main {
         3. Invoke Server API Endpoint
         4. Write Tests
         */
+
+        var serverUrl = "http://localhost:8080";
+        if (args.length == 1){
+            serverUrl = args[0];
+        }
+
+        new ChessClient(serverUrl).start();
     }
 }
