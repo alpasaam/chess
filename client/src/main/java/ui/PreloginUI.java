@@ -1,5 +1,7 @@
 package ui;
 
+//register should log me in
+
 import exception.ResponseException;
 import model.LoginResponse;
 
@@ -30,10 +32,11 @@ public class PreloginUI {
             }
         }
         System.out.println();
+        System.exit(0);
     }
 
     private String eval(String input) throws ResponseException {
-        var result = "Invalid input";
+        var result = "Invalid input \n";
         var tokens = input.toLowerCase().split(" ");
         if (tokens.length > 0) {
             var cmd = tokens[0];
@@ -42,7 +45,7 @@ public class PreloginUI {
                 case "quit" -> "quit";
                 case "login" -> login();
                 case "register" -> register();
-                default -> help();
+                default -> result + help();
             };
         }
         return result;
@@ -91,7 +94,15 @@ public class PreloginUI {
             String email = scanner.nextLine();
 
             client.register(username, password, email);
-            return "Registration successful! Please login.";
+            System.out.println("Registration successful!");
+
+            LoginResponse response = client.login(username, password);
+            authToken = response.authToken();
+            System.out.println("Login successful!");
+
+            PostloginUI postloginUI = new PostloginUI(client, authToken);
+            postloginUI.run();
+            return "login";
         } catch (Exception e) {
             throw new ResponseException(400, "Registration failed: Enter valid username, password and email.");
         }

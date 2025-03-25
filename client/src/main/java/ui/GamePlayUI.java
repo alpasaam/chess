@@ -5,6 +5,9 @@
 
 package ui;
 
+// print the black perspective when joining as black
+
+
 import chess.ChessBoard;
 import chess.ChessPiece;
 import chess.ChessGame.TeamColor;
@@ -28,7 +31,7 @@ public class GamePlayUI {
 
         out.print(ERASE_SCREEN);
 
-        drawChessBoard(out, true, chessBoard); // Draw board for white player
+        drawChessBoard(out, false, chessBoard); // Draw board for white player
 
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
@@ -68,11 +71,11 @@ public class GamePlayUI {
 
     private static void drawRowOfSquares(PrintStream out, int boardRow, boolean isWhitePlayer, ChessBoard chessBoard) {
         setGrey(out);
-        out.print(" " + (isWhitePlayer ? boardRow + 1 : BOARD_SIZE_IN_SQUARES - boardRow) + " "); // Print row number
+        out.print(" " + (!isWhitePlayer ? boardRow + 1 : BOARD_SIZE_IN_SQUARES - boardRow) + " "); // Print row number
         for (int squareRow = SQUARE_SIZE_IN_PADDED_CHARS - 1; squareRow >= 0; --squareRow) {
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
                 int row = isWhitePlayer ? BOARD_SIZE_IN_SQUARES - boardRow - 1 : boardRow;
-                int col = isWhitePlayer ? BOARD_SIZE_IN_SQUARES - boardCol - 1 : boardCol;
+                int col = isWhitePlayer ? boardCol : BOARD_SIZE_IN_SQUARES - boardCol - 1;
 
                 // Determine the color based on the original board coordinates
                 if ((boardRow + boardCol) % 2 == 0) {
@@ -84,7 +87,7 @@ public class GamePlayUI {
                 setBlack(out);
             }
             setGrey(out);
-            out.print(" " + (isWhitePlayer ? boardRow + 1 : BOARD_SIZE_IN_SQUARES - boardRow) + " "); // Print row number at the end
+            out.print(" " + (!isWhitePlayer ? boardRow + 1 : BOARD_SIZE_IN_SQUARES - boardRow) + " "); // Print row number at the end
             setDefault(out);
             out.println();
         }

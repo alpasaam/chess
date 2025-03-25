@@ -1,5 +1,7 @@
 package ui;
 
+// display existing users in game when listing, show what color they represent
+
 import exception.ResponseException;
 import model.GameData;
 
@@ -35,7 +37,7 @@ public class PostloginUI {
     }
 
     private String eval(String input) throws ResponseException {
-        var result = "Invalid input";
+        var result = "Invalid input \n";
         var tokens = input.toLowerCase().split(" ");
         if (tokens.length > 0) {
             var cmd = tokens[0];
@@ -46,7 +48,7 @@ public class PostloginUI {
                 case "list" -> listGames();
                 case "play" -> playGame(tokens);
                 case "observe" -> observeGame(tokens);
-                default -> help();
+                default -> result + help();
             };
         }
         return result;
@@ -76,7 +78,7 @@ public class PostloginUI {
             preloginUI.run();
             return "logout";
         } catch (Exception e) {
-            throw new ResponseException(400, "Logout failed: Unable to log out due to server error.");
+            throw new ResponseException(400, "Logout failed: Unable to log out.");
         }
     }
 
@@ -87,7 +89,7 @@ public class PostloginUI {
             client.createGame(gameName, authToken);
             return "Game created successfully!";
         } catch (Exception e) {
-            throw new ResponseException(400, "Game creation failed: Unable to create a new game due to server error.");
+            throw new ResponseException(400, "Game creation failed: Unable to create a new game.");
         }
     }
 
@@ -102,8 +104,10 @@ public class PostloginUI {
                             .append(". ")
                             .append(game.gameName())
                             .append(" - Players: ")
+                            .append("White: ")
                             .append(game.whiteUsername())
                             .append(", ")
+                            .append("Black: ")
                             .append(game.blackUsername())
                             .append("\n");
                 }
@@ -112,7 +116,7 @@ public class PostloginUI {
                 return "No games available.";
             }
         } catch (Exception e) {
-            throw new ResponseException(400, "Failed to list games: Unable to retrieve game list from server.");
+            throw new ResponseException(400, "Failed to list games: Unable to retrieve game list.");
         }
     }
 
@@ -133,13 +137,13 @@ public class PostloginUI {
             GameData game = gameList.get(gameNumber - 1);
             client.joinGame(authToken, color, game.gameID());
 
-            GamePlayUI.drawChessBoard(System.out, true, game.game().getBoard());
+            GamePlayUI.drawChessBoard(System.out, color.equals("WHITE"), game.game().getBoard());
 
             return "Joined game successfully!";
         } catch (NumberFormatException e) {
             throw new ResponseException(400, "Invalid game number: The game number must be an integer.");
         } catch (Exception e) {
-            throw new ResponseException(400, "Failed to join game: Unable to join the game due to server error.");
+            throw new ResponseException(400, "Failed to join game: Unable to join the game.");
         }
     }
 
@@ -162,7 +166,7 @@ public class PostloginUI {
         } catch (NumberFormatException e) {
             throw new ResponseException(400, "Invalid game number: The game number must be an integer.");
         } catch (Exception e) {
-            throw new ResponseException(400, "Failed to observe game: Unable to observe the game due to server error.");
+            throw new ResponseException(400, "Failed to observe game: Unable to observe the game.");
         }
     }
 }
