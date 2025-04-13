@@ -1,8 +1,14 @@
 package ui.websocket;
 
-import javax.websocket.Endpoint;
-import javax.websocket.EndpointConfig;
-import javax.websocket.Session;
+
+
+import com.google.gson.Gson;
+import exception.ResponseException;
+
+import javax.websocket.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class WebSocketFacade extends Endpoint {
 
