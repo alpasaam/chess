@@ -1,6 +1,9 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import exception.ResponseException;
 
 import java.util.Scanner;
@@ -18,7 +21,6 @@ public class GamePlayUI {
 
     public void run() {
         out.println("Welcome to the GamePlay UI! Press enter to get help.");
-        drawChessBoard();
 
         String result = "";
         while (!result.equals("leave")) {
@@ -73,7 +75,7 @@ public class GamePlayUI {
     }
 
     private void drawChessBoard(){
-        GameBoardUI.drawChessBoard(out, repl.getColor().equals("WHITE"), repl.getGame().game().getBoard());
+        GameBoardUI.drawChessBoard(out, repl.getColor().equals("WHITE"), repl.getGame().game().getBoard(), null);
 
     }
 
@@ -88,15 +90,54 @@ public class GamePlayUI {
     }
 
     private String makeMove(String[] tokens) throws ResponseException {
-        // TODO: Implement logic to make a move in the game
-        if (tokens.length < 3) {
-            throw new ResponseException(400, "Usage: move <from> <to>");
+        ChessPiece.PieceType promotionPiece = null;
+        if (tokens.length < 2 || tokens.length > 3) {
+            throw new ResponseException(400, "Usage: makeMove <fromTo> [promotionType]");
         }
-        String from = tokens[1];
-        String to = tokens[2];
-        out.println("Making move from " + from + " to " + to + "...");
-        // Example: repl.client.makeMove(repl.authToken, repl.gameID, new ChessMove(from, to));
+
+        String fromTo = tokens[1].toLowerCase();
+        if (fromTo.length() != 4) {
+            throw new ResponseException(400, "Invalid fromTo format. Expected format: <from><to> (e.g., a1h8).");
+        }
+
+        String from = fromTo.substring(0, 2);
+        String to = fromTo.substring(2, 4);
+
+        ChessPosition fromPosition;
+        ChessPosition toPosition;
+
+        if (tokens.length == 3) {
+            promotionPiece = ChessPiece.PieceType.valueOf(tokens[2].toLowerCase());
+        }
+
+        try {
+            fromPosition = fromAlgebraic(from);
+            toPosition = fromAlgebraic(to);
+            repl.setWebSocketFacade(repl.getWebSocketFacade());
+            repl.getClient().makeMove(repl.getAuthToken(), repl.getGame().gameID(), new ChessMove(fromPosition, toPosition, promotionPiece));
+            //update the game
+            repl.setGame(repl.getGame());
+
+
+        } catch (IllegalArgumentException e) {
+            throw new ResponseException(400, e.getMessage());
+        }
+
+        String promotionType = null;
+        if (tokens.length == 3) {
+            promotionType = tokens[2].toUpperCase();
+            if (!isValidPromotionType(promotionType)) {
+                throw new ResponseException(400, "Invalid promotion type. Valid types: QUEEN, ROOK, BISHOP, KNIGHT.");
+            }
+        }
+
+        out.println("Making move from " + from + " to " + to + (promotionType != null ? " with promotion to " + promotionType : "") + "...");
+        out.println("Game state updated successfully.");
         return "Move made successfully.\n";
+    }
+
+    private boolean isValidPromotionType(String promotionType) {
+        return promotionType.equals("QUEEN") || promotionType.equals("ROOK") || promotionType.equals("BISHOP") || promotionType.equals("KNIGHT");
     }
 
     private String resignGame() throws ResponseException {
@@ -105,6 +146,44 @@ public class GamePlayUI {
     }
 
     private String highlightMoves(String[] tokens) throws ResponseException {
+        if (tokens.length < 2) {
+            throw new ResponseException(400, "Usage: highlight <square>");
+        }
 
+        String square = tokens[1].toLowerCase();
+        ChessPosition position = fromAlgebraic(square);
+
+        if (!position.isValid()) {
+            throw new ResponseException(400, "Invalid square: " + square);
+        }
+
+        ChessGame game = repl.getGame().game();
+        ChessPiece piece = game.getBoard().getPiece(position);
+
+        if (piece == null) {
+            return "No piece at the given position.\n";
+        }
+
+        GameBoardUI.highlight(out, game.getBoard(), piece, position, repl.getColor().equals("WHITE"));
+
+        return "Highlighted legal moves for the piece at " + square + ".\n";
+    }
+
+    public static ChessPosition fromAlgebraic(String algebraic) {
+        if (algebraic == null || algebraic.length() != 2) {
+            throw new IllegalArgumentException("Invalid algebraic notation: " + algebraic + "needs to be 2 characters");
+        }
+
+        char columnChar = algebraic.charAt(0);
+        char rowChar = algebraic.charAt(1);
+
+        int col = columnChar - 'a' + 1;
+        int row = rowChar - '1' + 1;
+
+        if (col < 1 || col > 8 || row < 1 || row > 8) {
+            throw new IllegalArgumentException("Invalid algebraic notation: " + algebraic);
+        }
+
+        return new ChessPosition(row, col);
     }
 }

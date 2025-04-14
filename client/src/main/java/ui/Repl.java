@@ -36,22 +36,33 @@ public class Repl implements NotificationHandler {
     }
 
     public void notify(ServerMessage serverMessage) {
-        Gson gson = new Gson();
-
+        // Use the message type to decide how to deserialize and process it
         switch (serverMessage.getServerMessageType()) {
             case LOAD_GAME -> {
-                LoadGameMessage loadGameMessage = gson.fromJson(gson.toJson(serverMessage), LoadGameMessage.class);
-                System.out.println(EscapeSequences.SET_TEXT_COLOR_GREEN + "Game loaded: " + loadGameMessage.getGame());
+                // Deserialize to LoadGameMessage and print with the correct color
+                LoadGameMessage loadGameMessage = new Gson().fromJson(new Gson().toJson(serverMessage), LoadGameMessage.class);
+                Object gameObject = loadGameMessage.getGame();
+                game = new Gson().fromJson(new Gson().toJson(gameObject), GameData.class);
+                System.out.println();
+                GameBoardUI.drawChessBoard(System.out, !getColor().equals("BLACK"), game.game().getBoard(), null);
+                setGame(game);
+
+
             }
             case ERROR -> {
-                ErrorMessage errorMessage = gson.fromJson(gson.toJson(serverMessage), ErrorMessage.class);
-                System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "Error: " + errorMessage.getErrorMessage());
+                // Deserialize to ErrorMessage and print with the correct color
+                ErrorMessage errorMessage = new Gson().fromJson(new Gson().toJson(serverMessage), ErrorMessage.class);
+                System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "Error Message: " + errorMessage.getErrorMessage() + EscapeSequences.RESET_TEXT_COLOR);
             }
             case NOTIFICATION -> {
-                NotificationMessage notificationMessage = gson.fromJson(gson.toJson(serverMessage), NotificationMessage.class);
-                System.out.println(EscapeSequences.SET_TEXT_COLOR_YELLOW + "Notification: " + notificationMessage.getMessage());
+                // Deserialize to NotificationMessage and print with the correct color
+                NotificationMessage notificationMessage = new Gson().fromJson(new Gson().toJson(serverMessage), NotificationMessage.class);
+                System.out.println(EscapeSequences.SET_TEXT_COLOR_YELLOW + "Notification Message: " + notificationMessage.getMessage() + EscapeSequences.RESET_TEXT_COLOR);
             }
-            default -> System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "Unknown message type received.");
+            default -> {
+                // Fallback case for unknown message type
+                System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "Unknown Server Message Type: " + serverMessage + EscapeSequences.RESET_TEXT_COLOR);
+            }
         }
     }
 
@@ -77,7 +88,12 @@ public class Repl implements NotificationHandler {
     }
 
     public WebSocketFacade getWebSocketFacade() {
-        return webSocketFacade;
+        return client.getWebSocketFacade();
+    }
+
+    public void setWebSocketFacade(WebSocketFacade webSocketFacade) {
+        this.webSocketFacade = webSocketFacade;
+        client.setWebSocketFacade(webSocketFacade);
     }
 
     public String getServerUrl() {

@@ -142,12 +142,13 @@ public class PostloginUI {
             // Join the game
             repl.getClient().joinGame(repl.getAuthToken(), color, game.gameID());
 
-            repl.setState(State.INGAME);
+
 
             // Connect to the game
             repl.newWebSocketFacade();
             repl.getClient().connect(repl.getAuthToken(), game.gameID());
 
+            repl.setState(State.INGAME);
             return "Joined game successfully!";
         } catch (NumberFormatException e) {
             throw new ResponseException(400, "Invalid game number: The game number must be an integer.");

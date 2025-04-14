@@ -2,6 +2,7 @@ package server.websocket;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
@@ -72,9 +73,9 @@ public class WebsocketHandler {
 
     private void connect(UserGameCommand command, Session session, String username, GameData gameData) throws IOException {
         String role;
-        if (gameData.whiteUsername().equals(username)) {
+        if (gameData.whiteUsername() != null && gameData.whiteUsername().equals(username)) {
             role = "white";
-        } else if (gameData.blackUsername().equals(username)) {
+        } else if (gameData.blackUsername() != null && gameData.blackUsername().equals(username)) {
             role = "black";
         } else {
             role = "observer";
@@ -100,8 +101,13 @@ public class WebsocketHandler {
 
         ChessGame chessGame = gameData.game();
 
-        ChessGame.TeamColor playerTeam = gameData.whiteUsername().equals(username) ? ChessGame.TeamColor.WHITE
-                : gameData.blackUsername().equals(username) ? ChessGame.TeamColor.BLACK : null;
+        ChessGame.TeamColor playerTeam =
+                gameData.whiteUsername() != null && gameData.whiteUsername().equals(username)
+                        ? ChessGame.TeamColor.WHITE
+                        : gameData.blackUsername() != null && gameData.blackUsername().equals(username)
+                        ? ChessGame.TeamColor.BLACK
+                        : null;
+
 
         if (playerTeam == null) {
             throw new ResponseException(403, "You are not a player in this game");
@@ -114,19 +120,31 @@ public class WebsocketHandler {
         ChessMove move = moveCommand.getMove();
         try {
             chessGame.makeMove(move);
+            gameDAO.updateGame(gameData);
         } catch (InvalidMoveException e) {
             throw new ResponseException(400, "Invalid move");
         }
 
-        gameDAO.updateGame(gameData);
-
         ServerMessage loadGameMessage = new LoadGameMessage(gameData);
         connections.broadcastToGame(moveCommand.getGameID(), loadGameMessage, null);
 
-        String moveDescription = String.format("%s to %s", move.getStartPosition(), move.getEndPosition());
+
+        String moveDescription = String.format("%s to %s", toAlgebraic(move.getStartPosition()), toAlgebraic(move.getEndPosition()));
         String moveMessage = String.format("%s made a move: %s", username, moveDescription);
         ServerMessage notificationMessage = new NotificationMessage(moveMessage);
         connections.broadcastToGame(moveCommand.getGameID(), notificationMessage, username);
+    }
+
+    public static String toAlgebraic(ChessPosition position) {
+        if (position == null || !position.isValid()) {
+            throw new IllegalArgumentException("Invalid ChessPosition: " + position);
+        }
+
+        char columnChar = (char) ('a' + position.getColumn() - 1);
+        char rowChar = (char) ('1' + position.getRow() - 1);
+
+        return "" + columnChar + rowChar;
+
     }
 
     private void leave(UserGameCommand command, String username) throws IOException, ResponseException {

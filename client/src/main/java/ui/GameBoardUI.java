@@ -9,12 +9,14 @@ package ui;
 
 
 import chess.ChessBoard;
+import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessGame.TeamColor;
 import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 import static ui.EscapeSequences.*;
 
@@ -31,7 +33,7 @@ public class GameBoardUI {
 
         out.print(ERASE_SCREEN);
 
-        drawChessBoard(out, false, chessBoard); // Draw board for white player
+        drawChessBoard(out, false, chessBoard, null); // Draw board for white player
 
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
@@ -59,38 +61,41 @@ public class GameBoardUI {
         out.println();
     }
 
-    public static void drawChessBoard(PrintStream out, boolean isWhitePlayer, ChessBoard chessBoard) {
+    public static void drawChessBoard(PrintStream out, boolean isWhitePlayer, ChessBoard chessBoard, Collection<ChessPosition> positionsToHighlight) {
         setDefault(out);
         drawHeader(out, isWhitePlayer);
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
-            drawRowOfSquares(out, boardRow, isWhitePlayer, chessBoard);
+            drawRowOfSquares(out, boardRow, isWhitePlayer, chessBoard, positionsToHighlight);
         }
         drawHeader(out, isWhitePlayer);
         setDefault(out);
     }
 
-    private static void drawRowOfSquares(PrintStream out, int boardRow, boolean isWhitePlayer, ChessBoard chessBoard) {
+    private static void drawRowOfSquares(PrintStream out, int boardRow, boolean isWhitePlayer, ChessBoard chessBoard, Collection<ChessPosition> positionsToHighlight) {
         setGrey(out);
         out.print(" " + (!isWhitePlayer ? boardRow + 1 : BOARD_SIZE_IN_SQUARES - boardRow) + " "); // Print row number
-        for (int squareRow = SQUARE_SIZE_IN_PADDED_CHARS - 1; squareRow >= 0; --squareRow) {
-            for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-                int row = isWhitePlayer ? BOARD_SIZE_IN_SQUARES - boardRow - 1 : boardRow;
-                int col = isWhitePlayer ? boardCol : BOARD_SIZE_IN_SQUARES - boardCol - 1;
+        for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
+            int row = isWhitePlayer ? BOARD_SIZE_IN_SQUARES - boardRow - 1 : boardRow;
+            int col = isWhitePlayer ? boardCol : BOARD_SIZE_IN_SQUARES - boardCol - 1;
 
-                // Determine the color based on the original board coordinates
-                if ((boardRow + boardCol) % 2 == 0) {
-                    setWhite(out);
-                } else {
-                    setBlack(out);
-                }
-                printPiece(out, chessBoard.getPiece(new ChessPosition(row + 1, col + 1))); // Use chessBoard to get piece
+            ChessPosition position = new ChessPosition(row + 1, col + 1);
+
+            // Check if the position is in the highlighted positions
+            if (positionsToHighlight != null && positionsToHighlight.contains(position)) {
+                setYellow(out); // Highlight the square
+            } else if ((boardRow + boardCol) % 2 == 0) {
+                setWhite(out);
+            } else {
                 setBlack(out);
             }
-            setGrey(out);
-            out.print(" " + (!isWhitePlayer ? boardRow + 1 : BOARD_SIZE_IN_SQUARES - boardRow) + " "); // Print row number at the end
-            setDefault(out);
-            out.println();
+
+            printPiece(out, chessBoard.getPiece(position)); // Use chessBoard to get piece
+            setBlack(out);
         }
+        setGrey(out);
+        out.print(" " + (!isWhitePlayer ? boardRow + 1 : BOARD_SIZE_IN_SQUARES - boardRow) + " "); // Print row number at the end
+        setDefault(out);
+        out.println();
     }
 
     private static void setWhite(PrintStream out) {
@@ -106,6 +111,10 @@ public class GameBoardUI {
     private static void setGrey(PrintStream out) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
+    }
+
+    private static void setYellow(PrintStream out) {
+        out.print(SET_BG_COLOR_YELLOW);
     }
 
     private static void setDefault (PrintStream out){
@@ -143,4 +152,25 @@ public class GameBoardUI {
             };
         }
     }
+
+    public static void highlight(PrintStream out, ChessBoard chessBoard, ChessPiece piece, ChessPosition position, boolean isWhitePlayer) {
+        if (piece == null) {
+            out.println("No piece at the given position.");
+            return;
+        }
+
+        // Get legal moves for the piece
+        Collection<ChessPosition> legalMoves = piece.pieceMoves(chessBoard, position).stream()
+                .map(ChessMove::getEndPosition)
+                .toList();
+
+        if (legalMoves.isEmpty()) {
+            out.println("No legal moves available for the selected piece.");
+            return;
+        }
+
+        // Redraw the chessboard with highlights
+        drawChessBoard(out, isWhitePlayer, chessBoard, legalMoves);
+    }
+
 }

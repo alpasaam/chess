@@ -65,4 +65,7 @@ public class ChessClient {
     public void setWebSocketFacade(WebSocketFacade webSocketFacade) {
         this.webSocketFacade = webSocketFacade;
     }
+    public WebSocketFacade getWebSocketFacade() {
+        return this.webSocketFacade;
+    }
 }
