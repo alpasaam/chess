@@ -115,7 +115,7 @@ public class WebsocketHandler {
         try {
             chessGame.makeMove(move);
         } catch (InvalidMoveException e) {
-            throw new ResponseException(400, "Invalid move: " + e.getMessage());
+            throw new ResponseException(400, "Invalid move");
         }
 
         gameDAO.updateGame(gameData);
@@ -132,7 +132,7 @@ public class WebsocketHandler {
     private void leave(UserGameCommand command, String username) throws IOException, ResponseException {
         GameData gameData = gameDAO.getGame(command.getGameID());
         if (gameData == null) {
-            throw new ResponseException(404, "Game not found for ID: " + command.getGameID());
+            throw new ResponseException(404, "Game not found");
         }
 
         boolean isWhitePlayer = username.equals(gameData.whiteUsername());
