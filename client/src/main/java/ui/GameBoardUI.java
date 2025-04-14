@@ -71,7 +71,8 @@ public class GameBoardUI {
         setDefault(out);
     }
 
-    private static void drawRowOfSquares(PrintStream out, int boardRow, boolean isWhitePlayer, ChessBoard chessBoard, Collection<ChessPosition> positionsToHighlight) {
+    private static void drawRowOfSquares(PrintStream out, int boardRow, boolean isWhitePlayer,
+                                         ChessBoard chessBoard, Collection<ChessPosition> positionsToHighlight) {
         setGrey(out);
         out.print(" " + (!isWhitePlayer ? boardRow + 1 : BOARD_SIZE_IN_SQUARES - boardRow) + " "); // Print row number
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {

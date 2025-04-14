@@ -52,16 +52,19 @@ public class Repl implements NotificationHandler {
             case ERROR -> {
                 // Deserialize to ErrorMessage and print with the correct color
                 ErrorMessage errorMessage = new Gson().fromJson(new Gson().toJson(serverMessage), ErrorMessage.class);
-                System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "Error Message: " + errorMessage.getErrorMessage() + EscapeSequences.RESET_TEXT_COLOR);
+                System.out.println(EscapeSequences.SET_TEXT_COLOR_RED +
+                        "Error Message: " + errorMessage.getErrorMessage() + EscapeSequences.RESET_TEXT_COLOR);
             }
             case NOTIFICATION -> {
                 // Deserialize to NotificationMessage and print with the correct color
                 NotificationMessage notificationMessage = new Gson().fromJson(new Gson().toJson(serverMessage), NotificationMessage.class);
-                System.out.println(EscapeSequences.SET_TEXT_COLOR_YELLOW + "Notification Message: " + notificationMessage.getMessage() + EscapeSequences.RESET_TEXT_COLOR);
+                System.out.println(EscapeSequences.SET_TEXT_COLOR_YELLOW +
+                        "Notification Message: " + notificationMessage.getMessage() + EscapeSequences.RESET_TEXT_COLOR);
             }
             default -> {
                 // Fallback case for unknown message type
-                System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "Unknown Server Message Type: " + serverMessage + EscapeSequences.RESET_TEXT_COLOR);
+                System.out.println(EscapeSequences.SET_TEXT_COLOR_RED +
+                        "Unknown Server Message Type: " + serverMessage + EscapeSequences.RESET_TEXT_COLOR);
             }
         }
     }

@@ -4,18 +4,12 @@ import java.util.Objects;
 
 /**
  * Represents a Message the server can send through a WebSocket
- * 
+ * <p>
  * Note: You can add to this class, but you should not alter the existing
  * methods.
  */
 public class ServerMessage {
     ServerMessageType serverMessageType;
-
-    public enum ServerMessageType {
-        LOAD_GAME,
-        ERROR,
-        NOTIFICATION
-    }
 
     public ServerMessage(ServerMessageType type) {
         this.serverMessageType = type;
@@ -23,16 +17,6 @@ public class ServerMessage {
 
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
-    }
-
-    private ServerMessage createNotificationMessage(String message) {
-        return new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION) {
-            private final String notificationMessage = message;
-
-            public String getNotificationMessage() {
-                return notificationMessage;
-            }
-        };
     }
 
     @Override
@@ -50,5 +34,11 @@ public class ServerMessage {
     @Override
     public int hashCode() {
         return Objects.hash(getServerMessageType());
+    }
+
+    public enum ServerMessageType {
+        LOAD_GAME,
+        ERROR,
+        NOTIFICATION
     }
 }

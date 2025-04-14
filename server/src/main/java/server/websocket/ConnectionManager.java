@@ -39,21 +39,6 @@ public class ConnectionManager {
         }
     }
 
-    public void broadcastToAll(ServerMessage serverMessage) throws IOException {
-        var removeList = new ArrayList<Connection>();
-        String jsonMessage = new Gson().toJson(serverMessage); // Serialize the ServerMessage to JSON
-        for (var connection : connections.values()) {
-            if (connection.session.isOpen()) {
-                connection.send(jsonMessage); // Send the serialized JSON
-            } else {
-                removeList.add(connection);
-            }
-        }
-
-        for (var connection : removeList) {
-            connections.remove(connection.visitorName);
-        }
-    }
 
     public void broadcastToUser(String username, ServerMessage serverMessage) throws IOException {
         var connection = connections.get(username);
