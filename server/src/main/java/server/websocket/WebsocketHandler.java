@@ -1,6 +1,7 @@
 package server.websocket;
 
 import com.google.gson.Gson;
+import dataaccess.GameDAO;
 import exception.ResponseException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -8,56 +9,62 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.messages.ServerMessage;
 import websocket.commands.UserGameCommand;
 import websocket.commands.MakeMoveCommand;
+import dataaccess.AuthDAO;
 
 import java.io.IOException;
 
 @WebSocket
 public class WebSocketHandler {
 
-    private final ConnectionManager connections = new ConnectionManager();
-    private final Gson gson = new Gson();
+    AuthDAO authDAO;
+    GameDAO gameDAO;
 
+    public WebSocketHandler(AuthDAO authDAO, GameDAO gameDAO) {
+        this.authDAO = authDAO;
+        this.gameDAO = gameDAO;
+    }
+
+    private final ConnectionManager connections = new ConnectionManager();
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException {
-        UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
+    public void onMessage(Session session, String message) throws ResponseException {
+        UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
+        String username = authDAO.getAuth(command.getAuthToken()).username();
 
         switch (command.getCommandType()) {
-            case CONNECT -> connect(command.getPlayerName(), command.isObserver(), session);
-            case MAKE_MOVE -> {
-                MakeMoveCommand moveCommand = gson.fromJson(message, MakeMoveCommand.class);
-                makeMove(moveCommand.getGameId(), moveCommand.getMove(), moveCommand.getPlayerName());
-            }
-            case LEAVE -> leave(command.getPlayerName());
-            case RESIGN -> resign(command.getGameId(), command.getPlayerName());
+            case CONNECT -> connect(command, session, username);
+            case MAKE_MOVE -> makeMove(message, username);
+            case LEAVE -> leave(command, username);
+            case RESIGN -> resign(command, username);
             default -> throw new IllegalArgumentException("Unknown command type: " + command.getCommandType());
         }
     }
 
-    private void connect(String playerName, boolean isObserver, Session session) throws IOException {
-        connections.add(playerName, session);
-        String message = isObserver
-                ? String.format("%s joined as an observer", playerName)
-                : String.format("%s joined the game", playerName);
-        ServerMessage serverMessage = new ServerMessage(ServerMessage.Type.CONNECT, message);
-        connections.broadcast(playerName, serverMessage);
+    private void connect(UserGameCommand command, Session session, String username) throws ResponseException {
+        connections.add(username, session, command.getGameID());
+        String message = command.isObserver()
+                ? String.format("%s joined as an observer", username)
+                : String.format("%s joined the game", username);
+        ServerMessage serverMessage = new NotificationMessage(message);
+        connections.broadcastToGame(command.getGameID(), serverMessage);
     }
 
-    private void makeMove(String gameId, String move, String playerName) throws IOException {
-        String message = String.format("%s made a move in game %s: %s", playerName, gameId, move);
-        ServerMessage serverMessage = new ServerMessage(ServerMessage.Type.MOVE, message);
-        connections.broadcast(playerName, serverMessage);
+    private void makeMove(String message, String username) throws IOException {
+        MakeMoveCommand moveCommand = new Gson().fromJson(message, MakeMoveCommand.class);
+        String moveMessage = String.format("%s made a move in game %s: %s", username, moveCommand.getGameID(), moveCommand.getMove());
+        ServerMessage serverMessage = new NotificationMessage(moveMessage);
+        connections.broadcastToGame(moveCommand.getGameID(), serverMessage);
     }
 
-    private void leave(String playerName) throws IOException {
-        connections.remove(playerName);
-        String message = String.format("%s left the game", playerName);
-        ServerMessage serverMessage = new ServerMessage(ServerMessage.Type.LEAVE, message);
-        connections.broadcast(playerName, serverMessage);
+    private void leave(UserGameCommand command, String username) throws IOException {
+        connections.remove(username);
+        String message = String.format("%s left the game", username);
+        ServerMessage serverMessage = new NotificationMessage(message);
+        connections.broadcastToGame(command.getGameID(), serverMessage);
     }
 
-    private void resign(String gameId, String playerName) throws IOException {
-        String message = String.format("%s resigned from game %s", playerName, gameId);
-        ServerMessage serverMessage = new ServerMessage(ServerMessage.Type.RESIGN, message);
-        connections.broadcast(playerName, serverMessage);
+    private void resign(UserGameCommand command, String username) throws IOException {
+        String message = String.format("%s resigned from game %s", username, command.getGameID());
+        ServerMessage serverMessage = new NotificationMessage(message);
+        connections.broadcastToGame(command.getGameID(), serverMessage);
     }
 }

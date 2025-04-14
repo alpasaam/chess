@@ -25,7 +25,15 @@ public class ServerMessage {
         return this.serverMessageType;
     }
 
+    private ServerMessage createNotificationMessage(String message) {
+        return new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION) {
+            private final String notificationMessage = message;
 
+            public String getNotificationMessage() {
+                return notificationMessage;
+            }
+        };
+    }
 
     @Override
     public boolean equals(Object o) {
