@@ -36,10 +36,8 @@ public class Repl implements NotificationHandler {
     }
 
     public void notify(ServerMessage serverMessage) {
-        // Use the message type to decide how to deserialize and process it
         switch (serverMessage.getServerMessageType()) {
             case LOAD_GAME -> {
-                // Deserialize to LoadGameMessage and print with the correct color
                 LoadGameMessage loadGameMessage = new Gson().fromJson(new Gson().toJson(serverMessage), LoadGameMessage.class);
                 Object gameObject = loadGameMessage.getGame();
                 game = new Gson().fromJson(new Gson().toJson(gameObject), GameData.class);
@@ -50,19 +48,16 @@ public class Repl implements NotificationHandler {
 
             }
             case ERROR -> {
-                // Deserialize to ErrorMessage and print with the correct color
                 ErrorMessage errorMessage = new Gson().fromJson(new Gson().toJson(serverMessage), ErrorMessage.class);
                 System.out.println(EscapeSequences.SET_TEXT_COLOR_RED +
                         "Error Message: " + errorMessage.getErrorMessage() + EscapeSequences.RESET_TEXT_COLOR);
             }
             case NOTIFICATION -> {
-                // Deserialize to NotificationMessage and print with the correct color
                 NotificationMessage notificationMessage = new Gson().fromJson(new Gson().toJson(serverMessage), NotificationMessage.class);
                 System.out.println(EscapeSequences.SET_TEXT_COLOR_YELLOW +
                         "Notification Message: " + notificationMessage.getMessage() + EscapeSequences.RESET_TEXT_COLOR);
             }
             default -> {
-                // Fallback case for unknown message type
                 System.out.println(EscapeSequences.SET_TEXT_COLOR_RED +
                         "Unknown Server Message Type: " + serverMessage + EscapeSequences.RESET_TEXT_COLOR);
             }

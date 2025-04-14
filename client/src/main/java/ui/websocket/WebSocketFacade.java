@@ -31,26 +31,21 @@ public class WebSocketFacade extends Endpoint {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
 
-            //set message handler
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
 
-                    // Determine the type of the ServerMessage and notify with the appropriate type
                     switch (serverMessage.getServerMessageType()) {
                         case LOAD_GAME -> {
-                            // Deserialize to LoadGameMessage and notify
                             LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
                             notificationHandler.notify(loadGameMessage);
                         }
                         case ERROR -> {
-                            // Deserialize to ErrorMessage and notify
                             ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
                             notificationHandler.notify(errorMessage);
                         }
                         case NOTIFICATION -> {
-                            // Deserialize to NotificationMessage and notify
                             NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);
                             notificationHandler.notify(notificationMessage);
                         }
