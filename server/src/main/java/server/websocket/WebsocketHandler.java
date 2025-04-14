@@ -52,7 +52,7 @@ public class WebsocketHandler {
             }
             var gameData = gameDAO.getGame(command.getGameID());
             if (gameData == null) {
-                throw new ResponseException(404, "Game not found for ID: " + command.getGameID());
+                throw new ResponseException(404, "Game not found");
             }
 
             String username = authData.username();
@@ -92,7 +92,6 @@ public class WebsocketHandler {
     }
 
     private void makeMove(String message, String username) throws IOException, ResponseException {
-        // Parse the move command
         MakeMoveCommand moveCommand = new Gson().fromJson(message, MakeMoveCommand.class);
         GameData gameData = gameDAO.getGame(moveCommand.getGameID());
         if (gameData == null) {
@@ -101,7 +100,6 @@ public class WebsocketHandler {
 
         ChessGame chessGame = gameData.game();
 
-        // Validate that the player is making a move for their own team
         ChessGame.TeamColor playerTeam = gameData.whiteUsername().equals(username) ? ChessGame.TeamColor.WHITE
                 : gameData.blackUsername().equals(username) ? ChessGame.TeamColor.BLACK : null;
 
@@ -113,7 +111,6 @@ public class WebsocketHandler {
             throw new ResponseException(400, "It is not your turn");
         }
 
-        // Validate and make the move
         ChessMove move = moveCommand.getMove();
         try {
             chessGame.makeMove(move);
@@ -121,14 +118,11 @@ public class WebsocketHandler {
             throw new ResponseException(400, "Invalid move: " + e.getMessage());
         }
 
-        // Persist the updated game state
         gameDAO.updateGame(gameData);
 
-        // Broadcast the updated game state to all players
         ServerMessage loadGameMessage = new LoadGameMessage(gameData);
         connections.broadcastToGame(moveCommand.getGameID(), loadGameMessage, null);
 
-        // Notify other players about the move
         String moveDescription = String.format("%s to %s", move.getStartPosition(), move.getEndPosition());
         String moveMessage = String.format("%s made a move: %s", username, moveDescription);
         ServerMessage notificationMessage = new NotificationMessage(moveMessage);
@@ -136,41 +130,33 @@ public class WebsocketHandler {
     }
 
     private void leave(UserGameCommand command, String username) throws IOException, ResponseException {
-        // Fetch the game data
         GameData gameData = gameDAO.getGame(command.getGameID());
         if (gameData == null) {
             throw new ResponseException(404, "Game not found for ID: " + command.getGameID());
         }
 
-        // Check if the user is a player in the game
         boolean isWhitePlayer = username.equals(gameData.whiteUsername());
         boolean isBlackPlayer = username.equals(gameData.blackUsername());
 
         if (!isWhitePlayer && !isBlackPlayer) {
-            // If the user is not a player, just remove their connection
             connections.remove(username);
         } else {
-            // Update the game state to reflect the player's departure
             ChessGame.TeamColor teamTurn = gameData.game().getTeamTurn();
             if (isWhitePlayer) {
                 gameData = new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game());
-            } else if (isBlackPlayer) {
+            } else {
                 gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), null, gameData.gameName(), gameData.game());
             }
 
-            // If both players have left, mark the game as over
             if (gameData.whiteUsername() == null && gameData.blackUsername() == null) {
                 gameData.game().setTeamTurn(ChessGame.TeamColor.NONE);
             }
 
-            // Persist the updated game state
             gameDAO.updateGame(gameData);
 
-            // Remove the user's connection
             connections.remove(username);
         }
 
-        // Broadcast a notification to other users
         String message = String.format("%s left the game", username);
         ServerMessage serverMessage = new NotificationMessage(message);
         connections.broadcastToGame(command.getGameID(), serverMessage, username);
