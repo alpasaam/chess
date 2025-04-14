@@ -35,7 +35,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        teamTurn = team;
+        this.teamTurn = team;
     }
 
     /**
@@ -219,6 +219,6 @@ public class ChessGame {
      * Enum identifying the 2 possible teams in a chess game
      */
     public enum TeamColor {
-        WHITE, BLACK
+        WHITE, NONE, BLACK
     }
 }

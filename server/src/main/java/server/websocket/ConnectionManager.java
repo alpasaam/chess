@@ -54,4 +54,16 @@ public class ConnectionManager {
             connections.remove(connection.visitorName);
         }
     }
+
+    public void broadcastToUser(String username, ServerMessage serverMessage) throws IOException {
+        var connection = connections.get(username);
+        if (connection != null) {
+            if (connection.session.isOpen()) {
+                String jsonMessage = new Gson().toJson(serverMessage); // Serialize the ServerMessage to JSON
+                connection.send(jsonMessage); // Send the serialized JSON
+            } else {
+                connections.remove(username); // Remove the connection if the session is closed
+            }
+        }
+    }
 }
