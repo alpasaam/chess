@@ -7,7 +7,7 @@ import model.*;
 import java.util.Collection;
 
 import static java.lang.System.out;
-import static ui.GamePlayUI.drawChessBoard;
+import static ui.GameBoardUI.drawChessBoard;
 
 public class ChessClient {
     private final ServerFacade server;

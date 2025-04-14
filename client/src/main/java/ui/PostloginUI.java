@@ -137,7 +137,7 @@ public class PostloginUI {
             GameData game = gameList.get(gameNumber - 1);
             client.joinGame(authToken, color, game.gameID());
 
-            GamePlayUI.drawChessBoard(System.out, color.equals("WHITE"), game.game().getBoard());
+            GameBoardUI.drawChessBoard(System.out, color.equals("WHITE"), game.game().getBoard());
 
             return "Joined game successfully!";
         } catch (NumberFormatException e) {
