@@ -1,8 +1,11 @@
 package ui;
 
+import chess.ChessGame;
 import exception.ResponseException;
 
 import java.util.Scanner;
+
+import static java.lang.System.out;
 
 public class GamePlayUI {
     private final Scanner scanner = new Scanner(System.in);
@@ -14,7 +17,7 @@ public class GamePlayUI {
     }
 
     public void run() {
-        System.out.println("Welcome to the GamePlay UI! Press enter to get help.");
+        out.println("Welcome to the GamePlay UI! Press enter to get help.");
         drawChessBoard();
 
         String result = "";
@@ -24,12 +27,12 @@ public class GamePlayUI {
 
             try {
                 result = eval(line);
-                System.out.print(result);
+                out.print(result);
             } catch (Throwable e) {
-                System.out.print(e.getMessage());
+                out.print(e.getMessage());
             }
         }
-        System.out.println();
+        out.println();
     }
 
     private String eval(String input) throws ResponseException {
@@ -53,11 +56,8 @@ public class GamePlayUI {
         return result;
     }
 
-    private void drawChessBoard() {
-    }
-
     private void printPrompt() {
-        System.out.print("\n>>> ");
+        out.print("\n>>> ");
     }
 
     private String help() {
@@ -70,6 +70,11 @@ public class GamePlayUI {
                 - resign: Resigns from the game.
                 - highlight <square>: Highlights legal moves for a piece.
                 """;
+    }
+
+    private void drawChessBoard(){
+        GameBoardUI.drawChessBoard(out, repl.getColor().equals("WHITE"), repl.getGame().game().getBoard());
+
     }
 
     private String leaveGame() throws ResponseException {
@@ -89,27 +94,17 @@ public class GamePlayUI {
         }
         String from = tokens[1];
         String to = tokens[2];
-        System.out.println("Making move from " + from + " to " + to + "...");
+        out.println("Making move from " + from + " to " + to + "...");
         // Example: repl.client.makeMove(repl.authToken, repl.gameID, new ChessMove(from, to));
         return "Move made successfully.\n";
     }
 
     private String resignGame() throws ResponseException {
-        // TODO: Implement logic to resign from the game
-        System.out.println("Resigning from the game...");
-        // Example: repl.client.resign(repl.authToken, repl.gameID);
-        repl.setState(State.SIGNEDIN);
+        repl.getWebSocketFacade().resign(repl.getAuthToken(), repl.getGame().gameID());
         return "You have resigned from the game.\n";
     }
 
     private String highlightMoves(String[] tokens) throws ResponseException {
-        // TODO: Implement logic to highlight legal moves for a piece
-        if (tokens.length < 2) {
-            throw new ResponseException(400, "Usage: highlight <square>");
-        }
-        String square = tokens[1];
-        System.out.println("Highlighting moves for square: " + square + "...");
-        // Example: Fetch and display legal moves for the piece at the given square
-        return "Highlighted moves for " + square + ".\n";
+
     }
 }

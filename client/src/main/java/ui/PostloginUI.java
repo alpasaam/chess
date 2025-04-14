@@ -139,13 +139,14 @@ public class PostloginUI {
             repl.setGame(game);
             repl.setColor(color);
 
-            // Connect to the game
-            repl.getClient().connect(repl.getAuthToken(), game.gameID());
-
             // Join the game
             repl.getClient().joinGame(repl.getAuthToken(), color, game.gameID());
 
             repl.setState(State.INGAME);
+
+            // Connect to the game
+            repl.newWebSocketFacade();
+            repl.getClient().connect(repl.getAuthToken(), game.gameID());
 
             return "Joined game successfully!";
         } catch (NumberFormatException e) {

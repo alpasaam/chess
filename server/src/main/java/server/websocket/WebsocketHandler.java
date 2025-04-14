@@ -71,8 +71,6 @@ public class WebsocketHandler {
     }
 
     private void connect(UserGameCommand command, Session session, String username, GameData gameData) throws IOException {
-        connections.add(username, session, command.getGameID());
-
         String role;
         if (gameData.whiteUsername().equals(username)) {
             role = "white";
@@ -81,6 +79,8 @@ public class WebsocketHandler {
         } else {
             role = "observer";
         }
+
+        connections.add(username, session, command.getGameID());
 
         // Use broadcastToUser to send the LoadGameMessage
         ServerMessage loadGameMessage = new LoadGameMessage(gameData);

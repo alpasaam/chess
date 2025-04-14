@@ -11,9 +11,9 @@ import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 public class Repl implements NotificationHandler {
-    public ChessClient client;
-    public ServerFacade server;
-    public String authToken;
+    private ChessClient client;
+    private ServerFacade server;
+    private String authToken;
     private WebSocketFacade webSocketFacade;
     private String serverUrl;
     private GameData game;
@@ -23,6 +23,7 @@ public class Repl implements NotificationHandler {
 
     public Repl(String serverUrl) {
         client = new ChessClient(serverUrl, this);
+        this.server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
     }
 
