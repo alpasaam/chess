@@ -82,8 +82,9 @@ public class WebsocketHandler {
             role = "observer";
         }
 
+        // Use broadcastToUser to send the LoadGameMessage
         ServerMessage loadGameMessage = new LoadGameMessage(gameData);
-        session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+        connections.broadcastToUser(username, loadGameMessage);
 
         String message = String.format("%s joined the game as %s", username, role);
         ServerMessage notificationMessage = new NotificationMessage(message);
@@ -98,8 +99,21 @@ public class WebsocketHandler {
             throw new ResponseException(404, "Game not found for ID: " + moveCommand.getGameID());
         }
 
-        // Validate the move
         ChessGame chessGame = gameData.game();
+
+        // Validate that the player is making a move for their own team
+        ChessGame.TeamColor playerTeam = gameData.whiteUsername().equals(username) ? ChessGame.TeamColor.WHITE
+                : gameData.blackUsername().equals(username) ? ChessGame.TeamColor.BLACK : null;
+
+        if (playerTeam == null) {
+            throw new ResponseException(403, "You are not a player in this game");
+        }
+
+        if (playerTeam != chessGame.getTeamTurn()) {
+            throw new ResponseException(400, "It is not your turn");
+        }
+
+        // Validate and make the move
         ChessMove move = moveCommand.getMove();
         try {
             chessGame.makeMove(move);
@@ -110,24 +124,15 @@ public class WebsocketHandler {
         // Persist the updated game state
         gameDAO.updateGame(gameData);
 
-        // Notify all players about the move
+        // Broadcast the updated game state to all players
+        ServerMessage loadGameMessage = new LoadGameMessage(gameData);
+        connections.broadcastToGame(moveCommand.getGameID(), loadGameMessage, null);
+
+        // Notify other players about the move
         String moveDescription = String.format("%s to %s", move.getStartPosition(), move.getEndPosition());
         String moveMessage = String.format("%s made a move: %s", username, moveDescription);
-        ServerMessage moveNotification = new NotificationMessage(moveMessage);
-        connections.broadcastToGame(moveCommand.getGameID(), moveNotification, null);
-
-        // Check if the opponent is in check or checkmate
-        ChessGame.TeamColor opponentColor = chessGame.getTeamTurn();
-        if (chessGame.isInCheck(opponentColor)) {
-            String checkMessage = String.format("%s is in check", opponentColor);
-            ServerMessage checkNotification = new NotificationMessage(checkMessage);
-            connections.broadcastToGame(moveCommand.getGameID(), checkNotification, null);
-        }
-        if (chessGame.isInCheckmate(opponentColor) || chessGame.isInStalemate(opponentColor)) {
-            // Send a LOAD_GAME message to the player who made the move
-            ServerMessage loadGameMessage = new LoadGameMessage(gameData);
-            connections.broadcastToUser(username, loadGameMessage);
-        }
+        ServerMessage notificationMessage = new NotificationMessage(moveMessage);
+        connections.broadcastToGame(moveCommand.getGameID(), notificationMessage, username);
     }
 
     private void leave(UserGameCommand command, String username) throws IOException, ResponseException {
@@ -138,8 +143,8 @@ public class WebsocketHandler {
         }
 
         // Check if the user is a player in the game
-        boolean isWhitePlayer = gameData.whiteUsername().equals(username);
-        boolean isBlackPlayer = gameData.blackUsername().equals(username);
+        boolean isWhitePlayer = username.equals(gameData.whiteUsername());
+        boolean isBlackPlayer = username.equals(gameData.blackUsername());
 
         if (!isWhitePlayer && !isBlackPlayer) {
             // If the user is not a player, just remove their connection
@@ -148,7 +153,7 @@ public class WebsocketHandler {
             // Update the game state to reflect the player's departure
             ChessGame.TeamColor teamTurn = gameData.game().getTeamTurn();
             if (isWhitePlayer) {
-                gameData = new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(),gameData.game());
+                gameData = new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game());
             } else if (isBlackPlayer) {
                 gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), null, gameData.gameName(), gameData.game());
             }
