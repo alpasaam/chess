@@ -1,25 +1,16 @@
 package ui;
 
-import chess.ChessMove;
 import exception.ResponseException;
-import model.AuthData;
-import model.GameData;
-import ui.websocket.WebSocketFacade;
 
 import java.util.Scanner;
 
 public class GamePlayUI {
     private final Scanner scanner = new Scanner(System.in);
-    private final WebSocketFacade webSocketFacade;
-    private final String authToken;
-    private final GameData game;
-    private final boolean isObserving;
 
-    public GamePlayUI(WebSocketFacade webSocketFacade, String authToken, GameData game, boolean isObserving) {
-        this.webSocketFacade = webSocketFacade;
-        this.authToken = authToken;
-        this.game = game;
-        this.isObserving = isObserving;
+    private final Repl repl;
+
+    public GamePlayUI(Repl repl) {
+        this.repl = repl;
     }
 
     public void run() {
@@ -27,7 +18,7 @@ public class GamePlayUI {
         drawChessBoard();
 
         String result = "";
-        while (!result.equals("exit")) {
+        while (!result.equals("leave")) {
             printPrompt();
             String line = scanner.nextLine();
 
@@ -62,6 +53,9 @@ public class GamePlayUI {
         return result;
     }
 
+    private void drawChessBoard() {
+    }
+
     private void printPrompt() {
         System.out.print("\n>>> ");
     }
@@ -78,66 +72,44 @@ public class GamePlayUI {
                 """;
     }
 
-    private void drawChessBoard() {
-        boolean isWhitePerspective = isObserving || game.isWhitePlayer();
-        GameBoardUI.drawChessBoard(System.out, isWhitePerspective, game.game().getBoard());
-    }
-
     private String leaveGame() throws ResponseException {
-        try {
-            webSocketFacade.leave(authToken, game.gameID());
-            System.out.println("You have left the game.");
-            PostloginUI postloginUI = new PostloginUI(new ChessClient(), authToken);
-            postloginUI.run();
-            return "exit";
-        } catch (Exception e) {
-            throw new ResponseException(400, "Failed to leave the game: " + e.getMessage());
-        }
+        repl.setState(State.SIGNEDIN);
+        repl.getWebSocketFacade().leave(repl.getAuthToken(), repl.getGame().gameID());
+
+        repl.setGame(null);
+        repl.setColor(null);
+
+        return "You have left the game.\n";
     }
 
     private String makeMove(String[] tokens) throws ResponseException {
-        try {
-            if (tokens.length < 3) {
-                throw new ResponseException(400, "Usage: move <from> <to>");
-            }
-
-            String from = tokens[1];
-            String to = tokens[2];
-
-            ChessMove move = new ChessMove(from, to, null);
-            webSocketFacade.makeMove(authToken, game.gameID(), move);
-            return "Move command sent successfully!";
-        } catch (Exception e) {
-            throw new ResponseException(400, "Failed to send move command: " + e.getMessage());
+        // TODO: Implement logic to make a move in the game
+        if (tokens.length < 3) {
+            throw new ResponseException(400, "Usage: move <from> <to>");
         }
+        String from = tokens[1];
+        String to = tokens[2];
+        System.out.println("Making move from " + from + " to " + to + "...");
+        // Example: repl.client.makeMove(repl.authToken, repl.gameID, new ChessMove(from, to));
+        return "Move made successfully.\n";
     }
 
     private String resignGame() throws ResponseException {
-        System.out.println("Are you sure you want to resign? (yes/no)");
-        String confirmation = scanner.nextLine().toLowerCase();
-        if (confirmation.equals("yes")) {
-            try {
-                webSocketFacade.resign(authToken, game.gameID());
-                return "You have resigned from the game.\n";
-            } catch (Exception e) {
-                throw new ResponseException(400, "Failed to resign: " + e.getMessage());
-            }
-        }
-        return "Resignation canceled.\n";
+        // TODO: Implement logic to resign from the game
+        System.out.println("Resigning from the game...");
+        // Example: repl.client.resign(repl.authToken, repl.gameID);
+        repl.setState(State.SIGNEDIN);
+        return "You have resigned from the game.\n";
     }
 
     private String highlightMoves(String[] tokens) throws ResponseException {
-        try {
-            if (tokens.length < 2) {
-                throw new ResponseException(400, "Usage: highlight <square>");
-            }
-
-            String square = tokens[1];
-            // Assuming GameBoardUI has a method to highlight moves
-            GameBoardUI.highlightLegalMoves(System.out, square, game.getBoard());
-            return "Highlighted legal moves for piece at " + square + ".\n";
-        } catch (Exception e) {
-            throw new ResponseException(400, "Failed to highlight moves: " + e.getMessage());
+        // TODO: Implement logic to highlight legal moves for a piece
+        if (tokens.length < 2) {
+            throw new ResponseException(400, "Usage: highlight <square>");
         }
+        String square = tokens[1];
+        System.out.println("Highlighting moves for square: " + square + "...");
+        // Example: Fetch and display legal moves for the piece at the given square
+        return "Highlighted moves for " + square + ".\n";
     }
 }

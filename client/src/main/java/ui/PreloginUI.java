@@ -4,16 +4,16 @@ package ui;
 
 import exception.ResponseException;
 import model.LoginResponse;
+import ui.websocket.NotificationHandler;
 
 import java.util.Scanner;
 
 public class PreloginUI {
     private final Scanner scanner = new Scanner(System.in);
-    private final ChessClient client;
-    private String authToken;
+    private final Repl repl;
 
-    public PreloginUI(ChessClient client) {
-        this.client = client;
+    public PreloginUI(Repl repl) {
+        this.repl = repl;
     }
 
     public void run() {
@@ -72,12 +72,12 @@ public class PreloginUI {
             System.out.println("Please enter your password:");
             String password = scanner.nextLine();
 
-            LoginResponse response = client.login(username, password);
-            authToken = response.authToken();
+            LoginResponse response = repl.getClient().login(username, password);
+            repl.setAuthToken(response.authToken());
             System.out.println("Login successful!");
 
-            PostloginUI postloginUI = new PostloginUI(client, authToken);
-            postloginUI.run();
+            repl.setState(State.SIGNEDIN);
+
             return "login";
         } catch (Exception e) {
             throw new ResponseException(400, "Login failed: Unable to log in. Check username and password.");
@@ -93,15 +93,15 @@ public class PreloginUI {
             System.out.println("Please enter your email:");
             String email = scanner.nextLine();
 
-            client.register(username, password, email);
+            repl.getClient().register(username, password, email);
             System.out.println("Registration successful!");
 
-            LoginResponse response = client.login(username, password);
-            authToken = response.authToken();
+            LoginResponse response = repl.getClient().login(username, password);
+            repl.setAuthToken(response.authToken());
             System.out.println("Login successful!");
 
-            PostloginUI postloginUI = new PostloginUI(client, authToken);
-            postloginUI.run();
+            repl.setState(State.SIGNEDIN);
+
             return "login";
         } catch (Exception e) {
             throw new ResponseException(400, "Registration failed: Enter valid username, password and email.");

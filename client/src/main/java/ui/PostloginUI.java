@@ -9,13 +9,11 @@ import java.util.*;
 
 public class PostloginUI {
     private final Scanner scanner = new Scanner(System.in);
-    private final ChessClient client;
-    private final String authToken;
     private Collection<GameData> games;
+    private final Repl repl;
 
-    public PostloginUI(ChessClient client, String authToken) {
-        this.client = client;
-        this.authToken = authToken;
+    public PostloginUI(Repl repl) {
+        this.repl = repl;
     }
 
     public void run() {
@@ -72,10 +70,11 @@ public class PostloginUI {
 
     private String logout() throws ResponseException {
         try {
-            client.logout(authToken);
+            repl.getClient().logout(repl.getAuthToken());
             System.out.println("Logout successful!");
-            PreloginUI preloginUI = new PreloginUI(client);
-            preloginUI.run();
+
+            repl.setState(State.SIGNEDOUT);
+
             return "logout";
         } catch (Exception e) {
             throw new ResponseException(400, "Logout failed: Unable to log out.");
@@ -86,7 +85,7 @@ public class PostloginUI {
         try {
             System.out.println("Please enter a name for the new game:");
             String gameName = scanner.nextLine();
-            client.createGame(gameName, authToken);
+            repl.getClient().createGame(gameName, repl.getAuthToken());
             return "Game created successfully!";
         } catch (Exception e) {
             throw new ResponseException(400, "Game creation failed: Unable to create a new game.");
@@ -95,7 +94,7 @@ public class PostloginUI {
 
     private String listGames() throws ResponseException {
         try {
-            games = client.listGames(authToken);
+            games = repl.getClient().listGames(repl.getAuthToken());
             if (games != null && !games.isEmpty()) {
                 StringBuilder result = new StringBuilder("Games:\n");
                 int index = 1;
@@ -135,9 +134,18 @@ public class PostloginUI {
 
             List<GameData> gameList = new ArrayList<>(games);
             GameData game = gameList.get(gameNumber - 1);
-            client.joinGame(authToken, color, game.gameID());
 
-            GameBoardUI.drawChessBoard(System.out, color.equals("WHITE"), game.game().getBoard());
+            // Set the game and color for the player
+            repl.setGame(game);
+            repl.setColor(color);
+
+            // Connect to the game
+            repl.getClient().connect(repl.getAuthToken(), game.gameID());
+
+            // Join the game
+            repl.getClient().joinGame(repl.getAuthToken(), color, game.gameID());
+
+            repl.setState(State.INGAME);
 
             return "Joined game successfully!";
         } catch (NumberFormatException e) {
@@ -161,7 +169,17 @@ public class PostloginUI {
 
             List<GameData> gameList = new ArrayList<>(games);
             GameData game = gameList.get(gameNumber - 1);
-            client.observeGame(game.gameID(), authToken);
+
+            // Set the game and color for observation
+            repl.setGame(game);
+            repl.setColor("WHITE"); // Default color for observation
+
+            // Connect to the game
+            repl.newWebSocketFacade();
+            repl.getClient().connect(repl.getAuthToken(), game.gameID());
+
+            repl.setState(State.INGAME);
+
             return "Observing game successfully!";
         } catch (NumberFormatException e) {
             throw new ResponseException(400, "Invalid game number: The game number must be an integer.");

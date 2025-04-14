@@ -1,54 +1,68 @@
 package ui;
 
-import chess.ChessBoard;
+import chess.ChessMove;
 import exception.ResponseException;
 import model.*;
+import ui.websocket.NotificationHandler;
+import ui.websocket.WebSocketFacade;
 
 import java.util.Collection;
 
-import static java.lang.System.out;
-import static ui.GameBoardUI.drawChessBoard;
-
 public class ChessClient {
-    private final ServerFacade server;
+    private final ServerFacade serverFacade;
+    private final String serverUrl;
+    private final NotificationHandler notificationHandler;
+    private WebSocketFacade webSocketFacade;
 
-    public ChessClient(String serverUrl) {
-        server = new ServerFacade(serverUrl);
+    public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
+        this.serverFacade = new ServerFacade(serverUrl);
+        this.serverUrl = serverUrl;
+        this.notificationHandler = notificationHandler;
     }
 
-    public void start() {
-        PreloginUI preloginUI = new PreloginUI(this);
-        preloginUI.run();
-    }
-
+    // ServerFacade methods
     public LoginResponse login(String username, String password) throws ResponseException {
-        return server.login(new LoginRequest(username, password));
+        return serverFacade.login(new LoginRequest(username, password));
     }
 
     public RegisterResponse register(String username, String password, String email) throws ResponseException {
-        return server.register(new RegisterRequest(username, password, email));
+        return serverFacade.register(new RegisterRequest(username, password, email));
     }
 
     public void logout(String authToken) throws ResponseException {
-        server.logout(authToken);
-    }
-
-    public void createGame(String gameName, String authToken) throws ResponseException {
-        server.createGame(new NewGameRequest(authToken, gameName));
+        serverFacade.logout(authToken);
     }
 
     public Collection<GameData> listGames(String authToken) throws ResponseException {
-        return server.listGames(authToken);
+        return serverFacade.listGames(authToken);
+    }
+
+    public void createGame(String gameName, String authToken) throws ResponseException {
+        serverFacade.createGame(new NewGameRequest(authToken, gameName));
     }
 
     public void joinGame(String authToken, String color, int gameId) throws ResponseException {
-        server.joinGame(new JoinGameRequest(authToken, color, gameId));
+        serverFacade.joinGame(new JoinGameRequest(authToken, color, gameId));
     }
 
-    public void observeGame(int gameId, String authToken) throws ResponseException {
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-        drawChessBoard(out, true, board);
+    // WebSocketFacade methods
+    public void connect(String authToken, int gameID) throws ResponseException {
+        webSocketFacade.connect(authToken, gameID);
     }
 
+    public void leave(String authToken, int gameID) throws ResponseException {
+        webSocketFacade.leave(authToken, gameID);
+    }
+
+    public void makeMove(String authToken, int gameID, ChessMove move) throws ResponseException {
+        webSocketFacade.makeMove(authToken, gameID, move);
+    }
+
+    public void resign(String authToken, int gameID) throws ResponseException {
+        webSocketFacade.resign(authToken, gameID);
+    }
+
+    public void setWebSocketFacade(WebSocketFacade webSocketFacade) {
+        this.webSocketFacade = webSocketFacade;
+    }
 }

@@ -4,25 +4,26 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
+import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import exception.ResponseException;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import websocket.commands.MakeMoveCommand;
+import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
-import websocket.commands.UserGameCommand;
-import websocket.commands.MakeMoveCommand;
-import dataaccess.AuthDAO;
 
 import java.io.IOException;
 
 @WebSocket
 public class WebsocketHandler {
 
+    private final ConnectionManager connections = new ConnectionManager();
     AuthDAO authDAO;
     GameDAO gameDAO;
 
@@ -31,7 +32,6 @@ public class WebsocketHandler {
         this.gameDAO = gameDAO;
     }
 
-    private final ConnectionManager connections = new ConnectionManager();
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
         try {
